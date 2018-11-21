@@ -20,7 +20,7 @@ cd client
 npm install && npx webpack
 ```
 
-- Open the index.html for the desired screen or hard refresh the page if you're already viewing the html in you browser of choice.
+- Open the your-details.html for the desired screen or hard refresh the page if you're already viewing the html in you browser of choice.
 
 ### Prerequisites for Node Lambdas
 1. Ensure you have an installation of Node and NPM that matches the lambda runtime environment.
