@@ -30,32 +30,35 @@ function handle(event, context) {
   }
 
   LOGGER.info('starting_lambda | lambda_progress=started');
-  CommonUtils.retrieveSessionIdFromCookie(event, metaData);
-  if (metaData.sessionId == CommonUtils.COOKIE_NOT_SET) {
-    context.succeed(CommonUtils.generateResponse(
-      CommonUtils.RESPONSE_BODY_PERMISSION_DENIED,
-      CommonUtils.HTTP_RESPONSE_SESSION_EXPIRED,
-      CommonUtils.CONTENT_TYPE_APPLICATION_JSON_HEADER));
-    return;
-  }
 
   var alias = metaData.functionAlias;
-  if (CONFIG === null || CONFIG.ENVIRONMENT != alias) {
-    CommonUtils.getConfig(alias, function (retrievedConfig, err) {
-      if (err) {
-        context.succeed(CommonUtils.generateResponse(
-          CommonUtils.RESPONSE_BODY_INTERNAL_SERVER_ERROR,
-          CommonUtils.HTTP_RESPONSE_SERVER_ERROR,
-          CommonUtils.CONTENT_TYPE_APPLICATION_JSON_HEADER));
-      }
-      CONFIG = retrievedConfig;
-      respond(context);
-    });
-  }
-  else {
-    LOGGER.info('loaded_config_cached_in_warm_lambda | lambda_progress=in-progress');
+  (function loadConfig(next) {
+    if (CONFIG == null || CONFIG.ENVIRONMENT != alias) {
+      CommonUtils.getConfig(alias, (retrievedConfig, err) => {
+        if (err) {
+          context.succeed(CommonUtils.generateResponse(
+            CommonUtils.RESPONSE_BODY_INTERNAL_SERVER_ERROR,
+            CommonUtils.HTTP_RESPONSE_SERVER_ERROR,
+            CommonUtils.CONTENT_TYPE_APPLICATION_JSON_HEADER));
+          LOGGER.info('finishing_lambda | lambda_progress=finished');
+          return;
+        }
+        CONFIG = retrievedConfig;
+        next();
+      });
+    }
+    else {
+      LOGGER.info('loaded_config_cached_in_warm_lambda | lambda_progress=in-progress');
+      next();
+    }
+  })(function configLoaded() {
+    CommonUtils.retrieveSessionIdFromCookie(event, metaData);
+    if (metaData.sessionId == CommonUtils.COOKIE_NOT_SET) {
+      context.succeed(CommonUtils.generateUnauthorizedResponse(CONFIG));
+      return;
+    }
     respond(context);
-  }
+  });
 }
 
 function setupLambda(metaData) {
@@ -78,7 +81,7 @@ function renderHtml() {
   LOGGER.info('rendering_html | lambda_progress=in-progress');
   var resendOtpErrorComponent = getResendOtpErrorComponent();
   var ComponentFactory = React.createFactory(resendOtpErrorComponent);
-  var html = ReactDOMServer.renderToString(ComponentFactory());
+  var html = ReactDOMServer.renderToStaticMarkup(ComponentFactory());
   LOGGER.info('rendered_html | lambda_progress=in-progress');
   return CommonUtils.DOCTYPE_TAG + html;
 }
@@ -98,7 +101,7 @@ class ResendOtpError extends React.Component {
           <meta httpEquiv="x-ua-compatible" content="ie=edge"/>
           <meta httpEquiv="X-Frame-Options" content="deny"/>
 
-          <title>Contact us</title>
+          <title>Contact us - {CONFIG.SERVICE_NAME}</title>
 
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -129,7 +132,7 @@ class ResendOtpError extends React.Component {
           <main id="mainContent" role="main">
             <div className="page-band">
               <div className="page-section">
-                Find out why your NHS data matters
+                {CONFIG.SERVICE_NAME}
               </div>
             </div>
             <div className="page-section">

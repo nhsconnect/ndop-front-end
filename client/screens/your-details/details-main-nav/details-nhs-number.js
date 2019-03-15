@@ -64,8 +64,9 @@ class DetailsNHSNumber extends React.Component {
     let valid = !!this.props.validForms.name && !!this.props.validForms.dob;
     if (!valid) {
       this.props.history.push('/');
+    } else {
+      this.props.updateState({ 'fromReviewPage': false });
     }
-
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -92,7 +93,7 @@ class DetailsNHSNumber extends React.Component {
           <form onSubmit={this.handleSubmit}>
             <div id='nhs-number' className={this.state.validForm ? '' : 'form-row-error-active has-error'}>
               <h1 className='h2'>
-                <label htmlFor='nhs-number'>Enter your NHS Number</label>
+                <label htmlFor='nhs-number-input'>Enter your NHS Number</label>
               </h1>
               <div className='grid-row'>
                 <div id='nhsNumberContainer' className='column--three-quarters field-container' tabIndex='-1'>

@@ -14,7 +14,7 @@ const LandingPageContent = (props) => {
           <p>
             If we find your contact details, we'll then send you a security code. When your code is verified, you will be able to manage your choice online.
           </p>
-          <a disabled={props.disabled} id="yourDetailsButton" onClick={props.onClick} className="button" type="submit" value="Confirm">Continue</a>
+          <a disabled={props.disabled} id="yourDetailsButton" onClick={props.onClick} className="button" role="button" type="submit">Continue</a>
           <p>
             <a id="privacyNoticeLink" target="_blank" rel="noopener noreferrer" href={PRIVACY_NOTICE_ENDPOINT}>How your data will be processed to register and apply your opt-out
               <span className="util-visuallyhidden"> - Page opens in new window</span></a>

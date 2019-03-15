@@ -5,7 +5,7 @@ import { HashLink as Link } from 'react-router-hash-link';
 
 import { Section } from '../../../components/page-composition/section';
 import { ErrorBox } from '../../../components/page-composition/error-box';
-import { ERROR_TITLE, DETAILS_POSTCODE_TITLE, HASH_ROUTES } from '../../../common/constants';
+import {ERROR_TITLE, DETAILS_POSTCODE_TITLE, HASH_ROUTES, REVIEW_YOUR_DETAILS_TITLE} from '../../../common/constants';
 import { inputFocus } from '../../../common/error-handling';
 
 
@@ -96,6 +96,7 @@ class DetailsPostcode extends React.Component {
                 <div id='postcode'>
                   <div className={this.state.validForm ? 'form-row' : 'form-row form-row-error-active has-error'}>
                     <p className={this.state.validForm ? 'util-displaynone' : 'error error-message error-label error-text error-message-active'} id='postcode-error'>Please enter your postcode</p>
+                    <span className="form-label__hint">This must be your postcode you have registered with your GP practice.</span>
                     <span className="form-label__hint">For example, &#39;LS1 6AE&#39;</span>
                     <input className='-small form-control' name='postcode' type='text' id='postcode-input'  value={this.state.postcode} onChange={this.handleInput} autoComplete='postal-code'/>
                   </div>

@@ -61,7 +61,7 @@ function renderHtml() {
   LOGGER.info('rendering_html | lambda_progress=in-progress');
   var cookiesPolicyComponent = getCookiesPolicyComponent();
   var ComponentFactory = React.createFactory(cookiesPolicyComponent);
-  var html = ReactDOMServer.renderToString(ComponentFactory());
+  var html = ReactDOMServer.renderToStaticMarkup(ComponentFactory());
   LOGGER.info('rendered_html | lambda_progress=in-progress');
   return CommonUtils.DOCTYPE_TAG + html;
 }
@@ -80,7 +80,7 @@ class CookiesPolicy extends React.Component {
           <meta name="viewport" content="width=device-width, initial-scale=1"/>
           <meta httpEquiv="x-ua-compatible" content="ie=edge"/>
           <meta httpEquiv="X-Frame-Options" content="deny"/>
-          <title>Cookies Policy</title>
+          <title>Cookies Policy - {CONFIG.SERVICE_NAME}</title>
           <link rel="stylesheet" type="text/css" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/css/nhsuk.css'} media="screen"/>
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -110,7 +110,7 @@ class CookiesPolicy extends React.Component {
           <main id="content" role="main">
             <div className="page-band">
               <div className="page-section">
-                Find out why your NHS data matters
+                {CONFIG.SERVICE_NAME}
               </div>
             </div>
             <div className="page-section">
@@ -118,7 +118,7 @@ class CookiesPolicy extends React.Component {
                 <div className="grid-row">
                   <div className="column--two-thirds">
                     <h1 className="h2">Cookie policy</h1>
-                    <p>The &#39;Find out why your NHS data matters&#39; service puts small files (known as ‘cookies’) onto your computer to collect information about how you browse the site. Some are essential. For others you have a choice.</p>
+                    <p>The &#39;{CONFIG.SERVICE_NAME}&#39; service puts small files (known as ‘cookies’) onto your computer to collect information about how you browse the site. Some are essential. For others you have a choice.</p>
                     <p>We use cookies to:</p>
                     <ul>
                       <li>ensure your visit is secure</li>

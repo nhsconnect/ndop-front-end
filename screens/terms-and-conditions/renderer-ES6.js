@@ -72,7 +72,7 @@ function renderHtml() {
   LOGGER.info('rendering_html | lambda_progress=in-progress');
   var termsAndConditionsComponent = getTermsAndConditionsComponent();
   var ComponentFactory = React.createFactory(termsAndConditionsComponent);
-  var html = ReactDOMServer.renderToString(ComponentFactory());
+  var html = ReactDOMServer.renderToStaticMarkup(ComponentFactory());
   LOGGER.info('rendered_html | lambda_progress=in-progress');
   return CommonUtils.DOCTYPE_TAG + html;
 }
@@ -91,7 +91,7 @@ class TermsAndConditions extends React.Component {
           <meta name="viewport" content="width=device-width, initial-scale=1"/>
           <meta httpEquiv="x-ua-compatible" content="ie=edge"/>
           <meta httpEquiv="X-Frame-Options" content="deny"/>
-          <title>Terms and conditions</title>
+          <title>Terms and conditions - {CONFIG.SERVICE_NAME}</title>
           <link rel="stylesheet" type="text/css" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/css/nhsuk.css'} media="screen"/>
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -120,7 +120,7 @@ class TermsAndConditions extends React.Component {
           </header>
           <div className="page-band">
             <div className="page-section">
-              Find out why your NHS data matters
+              {CONFIG.SERVICE_NAME}
             </div>
           </div>
           <main id="mainContent" role="main">

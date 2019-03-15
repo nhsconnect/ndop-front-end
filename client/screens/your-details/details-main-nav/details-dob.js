@@ -136,15 +136,15 @@ class DetailsDOB extends React.Component {
                     <span className="form-label__hint">For example, &#39;5 7 1948&#39;</span>
                     <div id='dateOfBirthDayContainer' className='field-container' tabIndex='-1'>
                       <label id='dateOfBirthDayLabel' htmlFor='dateOfBirthDay' aria-label='date of birth, day'>Day</label>
-                      <input className='day form-control' id='dateOfBirthDay' name='dateOfBirthDay' type='number' value={this.state.dateOfBirthDay} onChange={this.handleInput} autoComplete='bday-day'/>
+                      <input className='day form-control' id='dateOfBirthDay' name='dateOfBirthDay' type='number' min='1' value={this.state.dateOfBirthDay} onChange={this.handleInput} autoComplete='bday-day'/>
                     </div>
                     <div>
                       <label id='dateOfBirthMonthLabel' htmlFor='dateOfBirthMonth' aria-label='date of birth, month'>Month</label>
-                      <input className='month form-control' id='dateOfBirthMonth' name='dateOfBirthMonth' type='number' value={this.state.dateOfBirthMonth} onChange={this.handleInput} autoComplete='bday-month'/>
+                      <input className='month form-control' id='dateOfBirthMonth' name='dateOfBirthMonth' type='number' min='1' value={this.state.dateOfBirthMonth} onChange={this.handleInput} autoComplete='bday-month'/>
                     </div>
                     <div>
                       <label id='dateOfBirthYearLabel' htmlFor='dateOfBirthYear' aria-label='date of birth, year'>Year</label>
-                      <input className='year form-control' id='dateOfBirthYear' name='dateOfBirthYear' type='number' value={this.state.dateOfBirthYear} onChange={this.handleInput} autoComplete='bday-year'/>
+                      <input className='year form-control' id='dateOfBirthYear' name='dateOfBirthYear' type='number' min='1' value={this.state.dateOfBirthYear} onChange={this.handleInput} autoComplete='bday-year'/>
                     </div>
                   </div>
                 </div>

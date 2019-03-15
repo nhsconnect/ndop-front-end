@@ -53,7 +53,7 @@ function renderHtml(context) {
   LOGGER.info('rendering_html | lambda_progress=in-progress');
   var ageRestrictionComponent = getAgeRestrictionComponent();
   var ComponentFactory = React.createFactory(ageRestrictionComponent);
-  var html = CommonUtils.DOCTYPE_TAG + ReactDOMServer.renderToString(ComponentFactory());
+  var html = CommonUtils.DOCTYPE_TAG + ReactDOMServer.renderToStaticMarkup(ComponentFactory());
   LOGGER.info('rendered_html | lambda_progress=in-progress');
   var response = CommonUtils.generateResponse(html, CommonUtils.HTTP_RESPONSE_OK, CommonUtils.CONTENT_TYPE_TEXT_HTML_HEADER);
   LOGGER.info('finished_lambda | lambda_progress=finished');
@@ -75,7 +75,7 @@ class AgeRestriction extends React.Component {
           <meta httpEquiv="x-ua-compatible" content="ie=edge"/>
           <meta httpEquiv="X-Frame-Options" content="deny"/>
 
-          <title>Contact us</title>
+          <title>Unable to make your choice online - {CONFIG.SERVICE_NAME}</title>
 
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -105,7 +105,7 @@ class AgeRestriction extends React.Component {
           </header>
           <div className="page-band">
             <div className="page-section">
-              Find out why your NHS data matters
+              {CONFIG.SERVICE_NAME}
             </div>
           </div>
           <main id="mainContent" role="main">

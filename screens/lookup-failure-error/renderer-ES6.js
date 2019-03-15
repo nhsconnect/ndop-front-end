@@ -30,32 +30,35 @@ function handle(event, context) {
   }
 
   LOGGER.info('starting_lambda | lambda_progress=started');
-  CommonUtils.retrieveSessionIdFromCookie(event, metaData);
-  if (metaData.sessionId == CommonUtils.COOKIE_NOT_SET) {
-    context.succeed(CommonUtils.generateResponse(
-      CommonUtils.RESPONSE_BODY_PERMISSION_DENIED,
-      CommonUtils.HTTP_RESPONSE_SESSION_EXPIRED,
-      CommonUtils.CONTENT_TYPE_APPLICATION_JSON_HEADER));
-    return;
-  }
 
   var alias = metaData.functionAlias;
-  if (CONFIG === null || CONFIG.ENVIRONMENT != alias) {
-    CommonUtils.getConfig(alias, function (retrievedConfig, err) {
-      if (err) {
-        context.succeed(CommonUtils.generateResponse(
-          CommonUtils.RESPONSE_BODY_INTERNAL_SERVER_ERROR,
-          CommonUtils.HTTP_RESPONSE_SERVER_ERROR,
-          CommonUtils.CONTENT_TYPE_APPLICATION_JSON_HEADER));
-      }
-      CONFIG = retrievedConfig;
-      respond(context, metaData.sessionId);
-    });
-  }
-  else {
-    LOGGER.info('loaded_config_cached_in_warm_lambda | lambda_progress=in-progress');
+  (function loadConfig(next) {
+    if (CONFIG == null || CONFIG.ENVIRONMENT != alias) {
+      CommonUtils.getConfig(alias, (retrievedConfig, err) => {
+        if (err) {
+          context.succeed(CommonUtils.generateResponse(
+            CommonUtils.RESPONSE_BODY_INTERNAL_SERVER_ERROR,
+            CommonUtils.HTTP_RESPONSE_SERVER_ERROR,
+            CommonUtils.CONTENT_TYPE_APPLICATION_JSON_HEADER));
+          LOGGER.info('finishing_lambda | lambda_progress=finished');
+          return;
+        }
+        CONFIG = retrievedConfig;
+        next();
+      });
+    }
+    else {
+      LOGGER.info('loaded_config_cached_in_warm_lambda | lambda_progress=in-progress');
+      next();
+    }
+  })(function configLoaded() {
+    CommonUtils.retrieveSessionIdFromCookie(event, metaData);
+    if (metaData.sessionId == CommonUtils.COOKIE_NOT_SET) {
+      context.succeed(CommonUtils.generateUnauthorizedResponse(CONFIG));
+      return;
+    }
     respond(context, metaData.sessionId);
-  }
+  });
 }
 
 function setupLambda(metaData) {
@@ -89,19 +92,23 @@ function respond(context, sessionId) {
         return;
       }
 
-      var html = renderHtml();
-      var response = CommonUtils.generateResponse(html, CommonUtils.HTTP_RESPONSE_OK, CommonUtils.CONTENT_TYPE_TEXT_HTML_HEADER);
+      var html = renderHtml(stateModel.flow);
+      var response = CommonUtils.generateResponse(html, CommonUtils.HTTP_RESPONSE_OK, Object.assign(
+        {},
+        {'Cache-Control': 'no-cache'},
+        CommonUtils.CONTENT_TYPE_TEXT_HTML_HEADER
+      ));
       LOGGER.info('finished_lambda | lambda_progress=finished');
       context.succeed(response);
     });
   });
 }
 
-function renderHtml() {
+function renderHtml(flow) {
   LOGGER.info('rendering_html | lambda_progress=in-progress');
   var landingPageComponent = getLookupFailureComponent();
   var ComponentFactory = React.createFactory(landingPageComponent);
-  var html = ReactDOMServer.renderToString(ComponentFactory());
+  var html = ReactDOMServer.renderToStaticMarkup(ComponentFactory({flow}));
   LOGGER.info('rendered_html | lambda_progress=in-progress');
   return CommonUtils.DOCTYPE_TAG + html;
 }
@@ -121,7 +128,7 @@ class LookupFailure extends React.Component {
           <meta httpEquiv="x-ua-compatible" content="ie=edge"/>
           <meta httpEquiv="X-Frame-Options" content="deny"/>
 
-          <title>Verification failure</title>
+          <title>Verification failure - {CONFIG.SERVICE_NAME}</title>
 
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -152,22 +159,35 @@ class LookupFailure extends React.Component {
           </header>
           <div className="page-band">
             <div className="page-section">
-              Find out why your NHS data matters
+              {CONFIG.SERVICE_NAME}
             </div>
           </div>
           <main id="mainContent" role="main">
             <div className="page-section" id="page-content">
               <div className="reading-width">
                 <div className="grid-row">
-                  <div className="column--two-thirds">
-                    <h1 className="h2">Verification failure</h1>
-                    <p>Sorry, we were unable to find a unique match for your details.</p>
-                    <p>
-                      This may be due to input errors and you may wish to try again.
-                    </p>
-                    <p>Alternatively, you can choose to use the non-digital service instead.</p>
-                    <p>Please see <a id="goToOtherWaysToSetYourPreferencesId" href={CONFIG.OTHER_WAYS_TO_SET_YOUR_PREFERENCES_ENDPOINT}>other ways to manage your choice</a>.</p>
-                  </div>
+                  {this.props.flow === 'postcode'
+                    ? <div className="column--two-thirds">
+                      <h1 className="h2">Sorry, the details you gave us do not match what we have in our records.</h1>
+                      <p>This may be because your GP practice does not have the correct details for you.</p>
+                      <p>You may be able to make your choice online by giving us your NHS number.</p>
+                      <a className="button" id="goToNHSNumberRoute" href="/yourdetails#/details-nhs-number">
+                        Use my NHS number
+                      </a>
+                    </div>
+                    : <div className="column--two-thirds">
+                      <h1 className="h2">Verification failure</h1>
+                      <p>Sorry, we were unable to find a unique match for your details.</p>
+                      <p>This may be due to input errors and you may wish to try again.</p>
+                      <p>Alternatively, you can choose to use the non-digital service instead.</p>
+                      <p>
+                        Please see&nbsp;<a id="goToOtherWaysToSetYourPreferencesId"
+                           href={CONFIG.OTHER_WAYS_TO_SET_YOUR_PREFERENCES_ENDPOINT}>
+                          other ways to manage your choice
+                        </a>.
+                      </p>
+                    </div>
+                  }
                 </div>
               </div>
             </div>

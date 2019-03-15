@@ -72,7 +72,7 @@ function renderHtml() {
   LOGGER.info('rendering_html | lambda_progress=in-progress');
   var landingPageComponent = getLandingPageComponent();
   var ComponentFactory = React.createFactory(landingPageComponent);
-  var html = ReactDOMServer.renderToString(ComponentFactory());
+  var html = ReactDOMServer.renderToStaticMarkup(ComponentFactory());
   LOGGER.info('rendered_html | lambda_progress=in-progress');
   return CommonUtils.DOCTYPE_TAG + html;
 }
@@ -91,7 +91,13 @@ class LandingPage extends React.Component {
           <meta name="viewport" content="width=device-width, initial-scale=1"/>
           <meta httpEquiv="x-ua-compatible" content="ie=edge"/>
           <meta httpEquiv="X-Frame-Options" content="deny"/>
-          <title>How to manage your choice online - Find out why your NHS data matters</title>
+          <noscript>
+            <style dangerouslySetInnerHTML={{__html: `
+              html{display:none;}
+            `}} />
+            <meta httpEquiv="refresh" content="0.0;url=/nojs/"/>
+          </noscript>
+          <title>How to manage your choice online - {CONFIG.SERVICE_NAME}</title>
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
           <link rel="icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.png'}/>
@@ -122,33 +128,12 @@ class LandingPage extends React.Component {
           </header>
           <div className="page-band">
             <div className="page-section">
-              Find out why your NHS data matters
+              {CONFIG.SERVICE_NAME}
             </div>
           </div>
           <main id="mainContent" role="main"
             data-other-ways-endpoint={CONFIG.OTHER_WAYS_TO_SET_YOUR_PREFERENCES_ENDPOINT}
             data-static-resources-cdn={CONFIG.STATIC_RESOURCES_CDN_URL}>
-            <noscript>
-              <div className="page-section">
-                <div className="reading-width">
-                  <h1 className="h2">Enable JavaScript to continue</h1>
-                  <div className="grid-row">
-                    <div className="column--two-thirds">
-                      <p>
-                        To use the online  &#39;Find out why your NHS data matters&#39; service it is necessary to enable JavaScript.
-                      </p>
-                      <p>
-                        <a target="_blank" rel="noopener noreferrer" href="https://www.enable-javascript.com/">Find out how to enable JavaScript in your web browser<span className="util-visuallyhidden"> - Page opens in new window</span></a> <span aria-hidden="true"> (opens in new window)</span>.
-                      </p>
-                      <h2 className="h3" id="other-ways-to-manage-your-choice">Other ways to manage your choice </h2>
-                      <p>
-                        If you are unable or do not wish to use our online service, see <a href={CONFIG.OTHER_WAYS_TO_SET_YOUR_PREFERENCES_ENDPOINT}>other ways to manage your choice</a>.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </noscript>
           </main>
           <footer role="contentinfo">
             <div className="global-footer">

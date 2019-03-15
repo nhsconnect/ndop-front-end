@@ -43,7 +43,7 @@ class DetailsYourReview extends React.Component {
       dateOfBirthMonth: this.props.dateOfBirthMonth.replace(/\s/g, ''),
       dateOfBirthYear: this.props.dateOfBirthYear.replace(/\s/g, ''),
       nhsNumber: nhsNumber,
-      postcode: this.props.postcode
+      postcode: this.props.postcode,
     };
 
     post(url, body)

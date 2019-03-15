@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Switch, HashRouter } from 'react-router-dom';
-import { HASH_ROUTES } from '../../common/constants.js';
+import { HASH_ROUTES, STATE_CACHE_VERSION, STATE_CACHE_KEY } from '../../common/constants.js';
 import DetailsName from './details-main-nav/details-name';
 import DetailsDOB from './details-main-nav/details-dob';
 import DetailsAuthOption from './details-main-nav/details-auth-option';
@@ -8,10 +8,10 @@ import DetailsNHSNumber from './details-main-nav/details-nhs-number';
 import DetailsPostcode from './details-main-nav/details-postcode';
 import DetailsYourReview from  './details-main-nav/details-your-review';
 
-
 class DetailsMainNav extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       validForms: {
         name: false,
@@ -20,8 +20,22 @@ class DetailsMainNav extends React.Component {
         postcode: false
       },
       disabled: false,
-      fromReviewPage: false
+      fromReviewPage: false,
+      flowUsed: null
     };
+
+    const cachedState = sessionStorage.getItem(STATE_CACHE_KEY);
+    if (cachedState) {
+      try {
+        const cachedStateObject = JSON.parse(cachedState);
+        if (cachedStateObject.version === STATE_CACHE_VERSION) {
+          delete cachedStateObject['fromReviewPage'];
+          this.state = Object.assign(this.state, cachedStateObject);
+        }
+      } catch (e) {
+        // Ignore failures and fall back to the default state
+      }
+    }
 
     this.updateState = this.updateState.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -33,7 +47,17 @@ class DetailsMainNav extends React.Component {
       ...this.state.validForms,
       ...form
     };
-    this.setState({...fields, validForms});
+    if ('postcode' in fields) {
+      fields['flowUsed'] = 'postcode';
+    } else if ('nhsNumber' in fields) {
+      fields['flowUsed'] = 'nhsNumber';
+    }
+    this.setState({...fields, validForms}, () => {
+      sessionStorage.setItem(STATE_CACHE_KEY, JSON.stringify({
+        version: STATE_CACHE_VERSION,
+        ...this.state
+      }));
+    });
   }
 
   warnBeforeNavigatingAway(e) {
@@ -111,8 +135,8 @@ class DetailsMainNav extends React.Component {
               render={() => (<DetailsYourReview
                 {...sharedProps}
                 onSubmit={this.onSubmit}
-                postcode={this.state.postcode}
-                nhsNumber={this.state.nhsNumber}
+                postcode={this.state.flowUsed === 'postcode' ? this.state.postcode : null}
+                nhsNumber={this.state.flowUsed === 'nhsNumber' ? this.state.nhsNumber : null}
                 firstName={this.state.firstName}
                 lastName={this.state.lastName}
                 dateOfBirthDay={this.state.dateOfBirthDay}

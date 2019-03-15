@@ -1,4 +1,5 @@
 import React from 'react';
+import { SERVICE_NAME } from '../../common/constants';
 import {OTHER_WAYS_TO_SET_YOUR_PREFERENCES_ENDPOINT} from '../../common/endpoints.js';
 
 const EnableCookiesContent = () => {
@@ -7,7 +8,7 @@ const EnableCookiesContent = () => {
 
     <div className="grid-row">
       <div className="column--two-thirds">
-        <p>The &#39;Find out why your NHS data matters&#39; service puts small files (known as &#39;cookies&#39;) onto your computer to keep your visit secure.</p>
+        <p>The &#39;{SERVICE_NAME}&#39; service puts small files (known as &#39;cookies&#39;) onto your computer to keep your visit secure.</p>
         <p>
           To be able to use this service online, you need to enable cookies.
         </p>

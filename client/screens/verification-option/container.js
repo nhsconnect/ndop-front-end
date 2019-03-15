@@ -7,7 +7,7 @@ import {ERROR_TITLE, VERIFICATION_OPTION_TITLE} from '../../common/constants.js'
 import {responseEndpoints} from './endpoint-mappings.js';
 import {post} from '../../services/fetch.js';
 import {handleSubmitResponse} from '../../common/handlers.js';
-
+import {STATE_CACHE_KEY} from "../../common/constants";
 import {Page} from './container/page.js';
 
 export class PageContainer extends React.Component {
@@ -23,6 +23,10 @@ export class PageContainer extends React.Component {
 
     this.validateForm = this.validateForm.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    sessionStorage.removeItem(STATE_CACHE_KEY);
   }
 
   validateForm() {

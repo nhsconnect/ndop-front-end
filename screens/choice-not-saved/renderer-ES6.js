@@ -53,7 +53,7 @@ function renderHtml(context) {
   LOGGER.info('rendering_html | lambda_progress=in-progress');
   var expiredOtpComponent = getExpiredOtpComponent();
   var ComponentFactory = React.createFactory(expiredOtpComponent);
-  var html = ReactDOMServer.renderToString(ComponentFactory());
+  var html = ReactDOMServer.renderToStaticMarkup(ComponentFactory());
   LOGGER.info('rendered_html | lambda_progress=in-progress');
 
   var response = CommonUtils.generateResponse(CommonUtils.DOCTYPE_TAG + html, CommonUtils.HTTP_RESPONSE_OK, CommonUtils.CONTENT_TYPE_TEXT_HTML_HEADER);
@@ -76,7 +76,7 @@ class SetPreferenceError extends React.Component {
           <meta httpEquiv="x-ua-compatible" content="ie=edge"/>
           <meta httpEquiv="X-Frame-Options" content="deny"/>
 
-          <title>Unable to save your choice - Find out why your NHS data matters</title>
+          <title>Unable to save your choice - {CONFIG.SERVICE_NAME}</title>
 
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -107,7 +107,7 @@ class SetPreferenceError extends React.Component {
           <main id="content" role="main">
             <div className="page-band">
               <div className="page-section">
-                Find out why your NHS data matters
+                {CONFIG.SERVICE_NAME}
               </div>
             </div>
             <div className="page-section">

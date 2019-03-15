@@ -4,7 +4,9 @@
   "description": "",
   "main": "renderer.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:fix": "eslint **/*-ES6.js --fix",
+    "lint": "eslint **/*-ES6.js"
   },
   "author": "",
   "license": "ISC",
