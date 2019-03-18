@@ -151,11 +151,6 @@ class ThankYou extends React.Component {
             </div>
           </div>
           <main id="mainContent" role="main">
-            <div className="page-band">
-              <div className="page-section">
-                <a href="#">{CONFIG.SERVICE_NAME}</a>
-              </div>
-            </div>
 
             <div className="page-section">
               <h1 className="page-title">Sorry, you&#39;ll have to start again</h1>

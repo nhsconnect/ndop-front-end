@@ -99,7 +99,12 @@ class ContactDetailsNotFound extends React.Component {
           <meta name="viewport" content="width=device-width, initial-scale=1"/>
           <meta httpEquiv="x-ua-compatible" content="ie=edge"/>
           <meta httpEquiv="X-Frame-Options" content="deny"/>
-
+          <noscript>
+            <style dangerouslySetInnerHTML={{__html: `
+              html{display:none;}
+            `}} />
+            <meta httpEquiv="refresh" content="0.0;url=/nojs/"/>
+          </noscript>
           <title>No contact details found - {CONFIG.SERVICE_NAME}</title>
 
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
