@@ -40,7 +40,13 @@ class LandingPage extends React.Component {
     }
   }
 
-  handleClick() {
+  handleClick(e) {
+    e.preventDefault();
+
+    if (this.state.disabled) {
+        return;
+    }
+
     this.setState({ disabled: true });
 
     let url = CREATE_SESSION_ENDPOINT + getCacheBustingUniqueSeed();
@@ -55,8 +61,7 @@ class LandingPage extends React.Component {
 
   cookiesEnabled() {
     let cookiesEnabled = navigator.cookieEnabled;
-    this.setState({cookiesEnabled: cookiesEnabled}, () => {
-      return;});
+    this.setState({cookiesEnabled: cookiesEnabled}, () => {});
     return cookiesEnabled;
   }
 
@@ -82,9 +87,7 @@ class LandingPage extends React.Component {
       <div>
         <Section>
           <div className="column--full">
-
             {cookiesEnabled ? <LandingPageContent {...continueButtonProps}/> : <EnableCookiesContent/>}
-
           </div>
           <div className="column--three-quarters"></div>
         </Section>

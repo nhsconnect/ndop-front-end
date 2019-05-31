@@ -4,6 +4,7 @@ import {STORE_PREFERENCES_RESULT_ENDPOINT, CHOICE_NOT_SAVED_ENDPOINT} from '../c
 import {fadeIn, getCacheBustingUniqueSeed} from '../common/utils.js';
 import {get} from '../services/fetch.js';
 import {Loader} from '../components/loader.js';
+import {FeedbackBanner} from '../components/feedback-banner.js';
 import {POLL_DELAY_MILLIS, MAX_TIMEOUTS, MAX_RETRIES} from '../common/constants.js';
 
 import {Page} from './thank-you/page.js';
@@ -17,12 +18,18 @@ class ThankYou extends React.Component {
 
     this.storeSuccess = false;
     this.state = {
-      'preference': null
+      'preference': null,
+      'feedbackBannerVisible': false
     };
 
     this.getStorePreferencesResult = this.getStorePreferencesResult.bind(this);
     this.handlePollResponse = this.handlePollResponse.bind(this);
     this.poll = this.poll.bind(this);
+    this.handleFeedbackCloseButton = this.handleFeedbackCloseButton.bind(this);
+  }
+
+  handleFeedbackCloseButton(){
+    this.setState({'feedbackBannerVisible': false});
   }
 
   getStorePreferencesResult(){
@@ -50,6 +57,7 @@ class ThankYou extends React.Component {
       this.check(data.preference);
       this.setState({'preference': data.preference}, () =>
       {fadeIn('#flash-message');return;});
+      setTimeout(function() {this.setState({'feedbackBannerVisible': true})}.bind(this), 3000);
       return;
     }
     else if (status === 206) {
@@ -91,7 +99,10 @@ class ThankYou extends React.Component {
   render() {
     if (this.storeSuccess == true) {
       return (
-        <Page preference={this.state.preference}/>
+        <div>
+          <Page preference={this.state.preference}/>
+          <FeedbackBanner handleClick={this.handleFeedbackCloseButton} feedbackBannerVisible={this.state.feedbackBannerVisible}/>
+        </div>
       );
     } else {
       return Loader();

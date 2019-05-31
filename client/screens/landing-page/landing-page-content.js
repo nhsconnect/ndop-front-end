@@ -1,30 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {PRIVACY_NOTICE_ENDPOINT, STATIC_RESOURCES_CDN_ENDPOINT} from '../../common/endpoints.js';
+import {PRIVACY_NOTICE_ENDPOINT} from '../../common/endpoints.js';
 
 const LandingPageContent = (props) => {
+  let buttonClasses = ["button"];
+  if (props.disabled) {
+    buttonClasses.push("disabled");
+  }
   return <div className="callout callout--interruption alt">
-    <h1 className="h2">How to manage your choice online</h1>
     <div className="grid-row">
       <div className="column--three-quarters tablet">
+        <h1 className="h2">We need to check who you are before you can make your choice</h1>
         <div className="reading-width">
           <p>
-            Tell us your name, date of birth and NHS number or postcode.
+            We&apos;ll need your:
           </p>
           <p>
-            If we find your contact details, we'll then send you a security code. When your code is verified, you will be able to manage your choice online.
+            <ul>
+                <li>name</li>
+                <li>date of birth</li>
+                <li>postcode or NHS number</li>
+            </ul>
           </p>
-          <a disabled={props.disabled} id="yourDetailsButton" onClick={props.onClick} className="button" role="button" type="submit">Continue</a>
           <p>
-            <a id="privacyNoticeLink" target="_blank" rel="noopener noreferrer" href={PRIVACY_NOTICE_ENDPOINT}>How your data will be processed to register and apply your opt-out
+              We&apos;ll use these details to find your contact details from your health records so we can send you a security code.
+          </p>
+          <a id="yourDetailsButton" onClick={props.onClick} className={buttonClasses.join(" ")} role="button" href="#">Continue</a>
+          <p>
+            <a id="privacyNoticeLink" target="_blank" rel="noopener noreferrer" href={PRIVACY_NOTICE_ENDPOINT}>How your data will be processed using this service
               <span className="util-visuallyhidden"> - Page opens in new window</span></a>
             <span aria-hidden="true"> (opens in new window).</span>
           </p>
         </div>
-      </div>
-
-      <div className="column--one-quarter tablet">
-        <img alt="" className="util-displaynone-mobile" width="100%" src={STATIC_RESOURCES_CDN_ENDPOINT + '/images/choice-icon-white.svg'}/>
       </div>
     </div>
   </div>;

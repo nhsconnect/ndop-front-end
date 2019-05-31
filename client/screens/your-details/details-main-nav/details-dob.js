@@ -20,8 +20,13 @@ class DetailsDOB extends React.Component {
       },
       'dateOfBirthDay': props.dateOfBirthDay || '',
       'dateOfBirthMonth': props.dateOfBirthMonth || '',
-      'dateOfBirthYear': props.dateOfBirthYear || ''
+      'dateOfBirthYear': props.dateOfBirthYear || '',
+      dobErrorMessage: '',
+      dobErrorMessageDetailed: '',
     };
+
+    this.futureDateOfBirth = false;
+    this.validDateOfBirth = true;
 
     this.validateForm = this.validateForm.bind(this);
     this.handleInput = this.handleInput.bind(this);
@@ -41,17 +46,89 @@ class DetailsDOB extends React.Component {
       'dateOfBirthMonth': 2,
       'dateOfBirthYear': 4
     } )[field];
-    if(field == 'dateOfBirthDay' || field == 'dateOfBirthMonth'){
-      valid = (value.toString().length <= validLength)
-      && (/^\d+$/.test(value));
-    } else {
-      valid = (value.toString().length == validLength)
-      && (/^\d+$/.test(value));
+    if(field == 'dateOfBirthDay'){
+      valid = (value.toString().length <= validLength) && (/^\d+$/.test(value)) &&  (parseInt(value) <= 31);
+    }
+    else if (field == 'dateOfBirthMonth'){
+      valid = (value.toString().length <= validLength) && (/^\d+$/.test(value)) &&  (parseInt(value) <= 12);
+    }
+    else {
+      valid = (value.toString().length == validLength) && (/^\d+$/.test(value));
     }
     return valid;
   }
 
+  buildErrorMessages(){
+
+    if(!this.state.dateOfBirthDay && !this.state.dateOfBirthMonth && !this.state.dateOfBirthYear){
+      this.setState({dobErrorMessage: 'Enter your date of birth', dobErrorMessageDetailed: 'Enter your date of birth' });
+    }
+    else if(!this.state.dateOfBirthDay && !this.state.dateOfBirthMonth && this.state.validFields.dateOfBirthYear){
+      this.setState({dobErrorMessage: 'Date of birth must include a day and a month', dobErrorMessageDetailed: 'Date of birth must include a day and a month' });
+    }
+    else if(!this.state.dateOfBirthDay && this.state.validFields.dateOfBirthMonth && !this.state.dateOfBirthYear){
+      this.setState({dobErrorMessage: 'Date of birth must include a day and a year', dobErrorMessageDetailed: 'Date of birth must include a day and a year' });
+    }
+    else if(this.state.validFields.dateOfBirthDay && !this.state.dateOfBirthMonth && !this.state.dateOfBirthYear){
+      this.setState({dobErrorMessage: 'Date of birth must include a month and a year', dobErrorMessageDetailed: 'Date of birth must include a month and a year' });
+    }
+    else if(!this.state.dateOfBirthDay && this.state.validFields.dateOfBirthMonth && this.state.validFields.dateOfBirthYear){
+      this.setState({dobErrorMessage: 'Date of birth must include a day', dobErrorMessageDetailed: 'Date of birth must include a day' });
+    }
+    else if(this.state.validFields.dateOfBirthDay && !this.state.dateOfBirthMonth && this.state.validFields.dateOfBirthYear){
+      this.setState({dobErrorMessage: 'Date of birth must include a month', dobErrorMessageDetailed: 'Date of birth must include a month' });
+    }
+    else if(this.state.validFields.dateOfBirthDay && this.state.validFields.dateOfBirthMonth && !this.state.dateOfBirthYear){
+      this.setState({dobErrorMessage: 'Date of birth must include a year', dobErrorMessageDetailed: 'Date of birth must include a year' });
+    }
+    else if(this.futureDateOfBirth){
+      this.setState({dobErrorMessage: 'Date of birth must be in the past', dobErrorMessageDetailed: "Date of birth must be in the past" });
+    }
+    else if(!this.validDateOfBirth){
+      this.setState({dobErrorMessage: 'Check your date of birth', dobErrorMessageDetailed: "Check that you've entered your date of birth correctly" });
+    }
+    else if(!this.state.validFields.dateOfBirthDay && this.state.validFields.dateOfBirthMonth && this.state.validFields.dateOfBirthYear){
+      this.setState({dobErrorMessage: 'Check your date of birth', dobErrorMessageDetailed: "Check that you've entered the day you were born correctly" });
+    }
+    else if(this.state.validFields.dateOfBirthDay && !this.state.validFields.dateOfBirthMonth && this.state.validFields.dateOfBirthYear){
+      this.setState({dobErrorMessage: 'Check your date of birth', dobErrorMessageDetailed: "Check that you've entered the month you were born correctly" });
+    }
+    else if(this.state.validFields.dateOfBirthDay && this.state.validFields.dateOfBirthMonth && !this.state.validFields.dateOfBirthYear){
+      this.setState({dobErrorMessage: 'Check your date of birth', dobErrorMessageDetailed: "Check that you've entered the year you were born correctly" });
+    }
+    else {
+      this.setState({dobErrorMessage: 'Check your date of birth', dobErrorMessageDetailed: "Check that you've entered your date of birth correctly"});
+    }
+  }
+
+  checkValidDate() {
+    var year = this.state.dateOfBirthYear;
+    var month = this.state.dateOfBirthMonth - 1;
+    var day = this.state.dateOfBirthDay;
+    var d = new Date(year, month, day);
+    if (d.getFullYear() == year && d.getMonth() == month && d.getDate() == day) {
+      this.validDateOfBirth = true;
+    }
+    else{
+      this.validDateOfBirth = false;
+    }
+  }
+
+  checkDOBInFuture(){
+    var todaysDate = new Date();
+    todaysDate.setHours(0, 0, 0, 0);
+    var dob = new Date(this.state.dateOfBirthYear, this.state.dateOfBirthMonth - 1, this.state.dateOfBirthDay);
+
+    if(dob >= todaysDate){
+      this.futureDateOfBirth = true;
+    }
+    else{
+      this.futureDateOfBirth = false;
+    }
+  }
+
   validateForm(){
+
     let validFields = this.state.validFields;
     for (var field in validFields) {
       validFields[field] = (!!this.state[field]) && this.checkLength(field);
@@ -62,6 +139,26 @@ class DetailsDOB extends React.Component {
       'dateOfBirthMonth': this.state.dateOfBirthMonth,
       'dateOfBirthYear': this.state.dateOfBirthYear
     };
+
+
+    if(validForm){
+      this.checkValidDate();
+      this.checkDOBInFuture();
+    }
+    else{
+      this.futureDateOfBirth = false;
+      this.validDateOfBirth = true;
+    }
+    if(this.futureDateOfBirth || !this.validDateOfBirth){
+      validForm = false;
+      validFields['dateOfBirthDay'] = false;
+      validFields['dateOfBirthMonth'] = false;
+      validFields['dateOfBirthYear'] = false;
+    }
+
+
+    this.buildErrorMessages();
+
 
     this.setState({validForm: validForm, validFields: validFields});
 
@@ -117,9 +214,9 @@ class DetailsDOB extends React.Component {
     return (
       <Section>
         <div className='column--two-thirds'>
-          <ErrorBox title='To use this online service, resolve the following errors' validForm={this.state.validForm}>
+          <ErrorBox title='There is a problem' validForm={this.state.validForm}>
             <li id='dob-error-link' className={validDOB ? 'util-displaynone' : ''}>
-              <Link to='#dateOfBirthDayContainer' id='dateOfBirthInputLink' name='dateOfBirthDayContainer' onClick={inputFocus}>Date of birth is missing or invalid</Link>
+              <Link to='#dateOfBirthDayContainer' id='dateOfBirthInputLink' name='dateOfBirthDayContainer' onClick={inputFocus}>{this.state.dobErrorMessage}</Link>
             </li>
           </ErrorBox>
           <form id='yourDetailsDOBForm' onSubmit={this.handleSubmit} action=''>
@@ -131,20 +228,20 @@ class DetailsDOB extends React.Component {
                 <div className='column--two-thirds'>
                   <div className={'-date form-group form-row util-no-margin ' + (validDOB ? '' : 'form-row-error-active has-error')} id='dob'>
                     <p className={validDOB ? 'util-displaynone' : 'error error-message error-label error-text error-message-active'} id="dob-error">
-                        Enter your date of birth
+                        {this.state.dobErrorMessageDetailed}
                     </p>
                     <span className="form-label__hint">For example, &#39;5 7 1948&#39;</span>
                     <div id='dateOfBirthDayContainer' className='field-container' tabIndex='-1'>
                       <label id='dateOfBirthDayLabel' htmlFor='dateOfBirthDay' aria-label='date of birth, day'>Day</label>
-                      <input className='day form-control' id='dateOfBirthDay' name='dateOfBirthDay' type='number' min='1' value={this.state.dateOfBirthDay} onChange={this.handleInput} autoComplete='bday-day'/>
+                      <input className={'day'+(this.state.validFields.dateOfBirthDay ? '' : ' form-control')} id='dateOfBirthDay' name='dateOfBirthDay' type='number' min='1' value={this.state.dateOfBirthDay} onChange={this.handleInput} autoComplete='bday-day'/>
                     </div>
                     <div>
                       <label id='dateOfBirthMonthLabel' htmlFor='dateOfBirthMonth' aria-label='date of birth, month'>Month</label>
-                      <input className='month form-control' id='dateOfBirthMonth' name='dateOfBirthMonth' type='number' min='1' value={this.state.dateOfBirthMonth} onChange={this.handleInput} autoComplete='bday-month'/>
+                      <input className={'month'+(this.state.validFields.dateOfBirthMonth ? '' : ' form-control')} id='dateOfBirthMonth' name='dateOfBirthMonth' type='number' min='1' value={this.state.dateOfBirthMonth} onChange={this.handleInput} autoComplete='bday-month'/>
                     </div>
                     <div>
                       <label id='dateOfBirthYearLabel' htmlFor='dateOfBirthYear' aria-label='date of birth, year'>Year</label>
-                      <input className='year form-control' id='dateOfBirthYear' name='dateOfBirthYear' type='number' min='1' value={this.state.dateOfBirthYear} onChange={this.handleInput} autoComplete='bday-year'/>
+                      <input className={'year'+(this.state.validFields.dateOfBirthYear ? '' : ' form-control')} id='dateOfBirthYear' name='dateOfBirthYear' type='number' min='1' value={this.state.dateOfBirthYear} onChange={this.handleInput} autoComplete='bday-year'/>
                     </div>
                   </div>
                 </div>
@@ -153,7 +250,7 @@ class DetailsDOB extends React.Component {
             <input type='submit' className='button' id='detailsDOBContinueButton' value='Continue'/>
           </form>
           <p>
-            <a href="" onClick={this.goBack} id='detailsDOBGoBackLink'>Go back</a>
+            <a href="" onClick={this.goBack} id='detailsDOBGoBackLink'>Go back to the previous page</a>
           </p>
         </div>
       </Section>

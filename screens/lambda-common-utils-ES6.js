@@ -240,7 +240,7 @@ function validSessionState(sessionValidationData, callback) {
       var parsedPayload = JSON.parse(JSON.parse(data.Payload));
       if (parsedPayload.exists !== true) {
         LOGGER.info('no_state_model_for_session_id | lambda_progress=in-progress');
-        callback(false);
+        return callback(false);
       }
 
       LOGGER.info('state_model_exists_for_session_id | lambda_progress=in-progress');
@@ -265,7 +265,7 @@ function getStateModel(invocationData, callback){
       var statusCode = data.StatusCode;
       if (statusCode != 200) {
         LOGGER.info(`no_state_model_for_session_id | target_lambda=${lambdaName} | status_code=${statusCode} | lambda_progress=in-progress`);
-        callback(null);
+        return callback(null);
       }
       LOGGER.info('got_state_model | lambda_progress=in-progress');
       callback(parsedPayload);
@@ -288,7 +288,7 @@ function putStateModel(invocationData, callback){
       var statusCode = data.StatusCode;
       if (statusCode != 200) {
         LOGGER.error(`error | failed_task=modify_state_model |error_message="Could not modify state model" | target_lambda=${lambdaName} | exception="${err}" | status_code=${statusCode} | lambda_progress=error`);
-        callback(false);
+        return callback(false);
       }
       LOGGER.info('modified_state_model | lambda_progress=in-progress');
       callback(true);
@@ -345,7 +345,7 @@ const Unauthorized = ({ CONFIG }) => (
       <meta httpEquiv="x-ua-compatible" content="ie=edge"/>
       <meta httpEquiv="X-Frame-Options" content="deny"/>
 
-      <title>You&#39;ll have to start again - {CONFIG.SERVICE_NAME}</title>
+      <title>Sorry, you'll need to start again - {CONFIG.SERVICE_NAME}</title>
 
       <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
       <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -360,11 +360,6 @@ const Unauthorized = ({ CONFIG }) => (
           <a id="skipToContentLink" href="#mainContent" className="skiplinks__link">Skip to main content</a>
         </div>
       </div>
-      <div className="banner beta">
-        <div className="page-section">
-          <span>BETA</span> This is a new service - your feedback will help this service.
-        </div>
-      </div>
       <header id="header" role="banner">
         <div className="global-header">
           <div className="global-header__inner">
@@ -373,41 +368,31 @@ const Unauthorized = ({ CONFIG }) => (
             </a>
           </div>
         </div>
-      </header>
-      <div className="page-band">
-        <div className="page-section">
-          {CONFIG.SERVICE_NAME}
+        <div className="page-band">
+          <div className="page-section">
+            {CONFIG.SERVICE_NAME}
+          </div>
         </div>
-      </div>
+      </header>
       <main id="mainContent" role="main">
-
-          <div className="page-section">
-              <h1 className="page-title">Sorry, you&#39;ll have to start again</h1>
-          </div>
-
-          <div className="page-section">
-              <div className="reading-width">
-                  <div className="grid-row">
-                      <div className="column--two-thirds">
-                          <p>Your session automatically ends if you don&#39;t use the service for
-                              59 minutes. We do this for your security.</p>
-                          <p>
-                              You&#39;ll need to&nbsp;
-                              <a id="returnButton" href="/landingpage">
-                                  start the service again
-                              </a>.
-                          </p>
-                      </div>
-                  </div>
+        <div className="page-section">
+          <div className="reading-width">
+            <div className="grid-row">
+              <div className="column--two-thirds">
+                <h1 className="h2">Sorry, you’ll need to start again</h1>
+                <p>You'll need to start again because you’ve not used this service for a while.</p>
+                <p>We do this for your security.</p>
+                <a id="returnButton" className="button" href="/landingpage">
+                  Start again
+                </a>
               </div>
+            </div>
           </div>
+        </div>
       </main>
       <footer role="contentinfo">
         <div className="global-footer">
           <div className="global-footer__inner">
-            <a id="footerImgLink" href={CONFIG.NHSUK_ROOT_DOMAIN} className="global-footer__link">
-              <img src={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/logotype-nhs-colour.png'} alt="NHS"/>
-            </a>
             <div>
               <h2 className="util-visuallyhidden">Terms and conditions</h2>
               <ul className="link-list">

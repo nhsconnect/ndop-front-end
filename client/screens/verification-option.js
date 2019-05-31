@@ -45,26 +45,20 @@ class VerificationOption extends React.Component {
   }
 
   handlePollResponse({data, status}) {
-    if(status === 200) {
+    if (status === 200) {
       this.searchSuccess = true;
       this.setState(setContactDetails(data.email, data.sms));
-      fadeIn('#flash-message');
-      return;
-    } else if(status === 206) {
+    } else if (status === 206) {
       let remainingRetries = this.state.remainingRetries -1;
       this.setState({
         remainingRetries: remainingRetries
       }, () => {setTimeout(this.poll, POLL_DELAY_MILLIS);});
-      return;
-    } if (responseEndpoints.hasOwnProperty(status)) {
+    } else if (responseEndpoints.hasOwnProperty(status)) {
       window.location.href = responseEndpoints[status];
-      return;
+    } else {
+      window.location.href = GENERIC_SYSTEM_ERROR_ENDPOINT;
     }
-
-    window.location.href = GENERIC_SYSTEM_ERROR_ENDPOINT;
   }
-
-
 
   poll() {
     if (this.state.remainingRetries > 0 && this.state.remainingTimeouts > 0) {

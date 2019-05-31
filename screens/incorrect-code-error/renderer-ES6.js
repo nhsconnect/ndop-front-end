@@ -38,6 +38,7 @@ function handle(event, context) {
           CommonUtils.RESPONSE_BODY_INTERNAL_SERVER_ERROR,
           CommonUtils.HTTP_RESPONSE_SERVER_ERROR,
           CommonUtils.CONTENT_TYPE_APPLICATION_JSON_HEADER));
+        return;
       }
       CONFIG = retrievedConfig;
       renderHtml(context);
@@ -80,7 +81,7 @@ class IncorrectOtp extends React.Component {
             `}} />
             <meta httpEquiv="refresh" content="0.0;url=/nojs/"/>
           </noscript>
-          <title>Contact us - {CONFIG.SERVICE_NAME}</title>
+          <title>Sorry, we could not accept your security code - {CONFIG.SERVICE_NAME}</title>
 
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -94,11 +95,6 @@ class IncorrectOtp extends React.Component {
               <a id="skipToContentLink" href="#mainContent" className="skiplinks__link">Skip to main content</a>
             </div>
           </div>
-          <div className="banner beta">
-            <div className="page-section">
-              <span>BETA</span> This is a new service - your feedback will help this service.
-            </div>
-          </div>
           <header id="header" role="banner">
             <div className="global-header">
               <div className="global-header__inner">
@@ -107,30 +103,21 @@ class IncorrectOtp extends React.Component {
                 </a>
               </div>
             </div>
-          </header>
-          <div className="page-band">
-            <div className="page-section">
-              {CONFIG.SERVICE_NAME}
+            <div className="page-band">
+              <div className="page-section">
+                {CONFIG.SERVICE_NAME}
+              </div>
             </div>
-          </div>
+          </header>
           <main id="mainContent" role="main">
             <div className="page-section">
               <div className="reading-width">
                 <div className="grid-row">
                   <div className="column--two-thirds">
-                    <h1 className="h2">Contact us</h1>
-                    <p>
-                      Sorry, we were unable to verify your security code.
-                    </p>
-                    <p>
-                      We may be able to guide you through the service, or manage your choice on your behalf.
-                    </p>
-                    <p>
-                      Call: 0300 303 5678
-                    </p>
-                    <p>
-                      Open: 9am to 5pm Monday to Friday (excluding bank holidays).
-                    </p>
+                    <h1 className="h2">Sorry, we could not accept your security code</h1>
+                    <p>Contact us for help making your choice:</p>
+                    <p>Telephone: 0300 303 5678
+                      <br/>Monday to Friday, 9am to 5pm excluding bank holidays</p>
                   </div>
                 </div>
               </div>
@@ -139,9 +126,6 @@ class IncorrectOtp extends React.Component {
           <footer role="contentinfo">
             <div className="global-footer">
               <div className="global-footer__inner">
-                <a id="footerImgLink" href={CONFIG.NHSUK_ROOT_DOMAIN} className="global-footer__link">
-                  <img src={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/logotype-nhs-colour.png'} alt="NHS"/>
-                </a>
                 <div>
                   <h2 className="util-visuallyhidden">Terms and conditions</h2>
                   <ul className="link-list">

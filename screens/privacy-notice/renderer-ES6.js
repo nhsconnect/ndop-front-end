@@ -104,11 +104,6 @@ class PrivacyNotice extends React.Component {
               <a id="skipToContentLink" href="#mainContent" className="skiplinks__link">Skip to main content</a>
             </div>
           </div>
-          <div className="banner beta">
-            <div className="page-section">
-              <span>BETA</span> This is a new service - your feedback will help this service.
-            </div>
-          </div>
           <header id="header" role="banner">
             <div className="global-header">
               <div className="global-header__inner">
@@ -117,13 +112,13 @@ class PrivacyNotice extends React.Component {
                 </a>
               </div>
             </div>
-          </header>
-          <main id="mainContent" role="main">
             <div className="page-band">
               <div className="page-section">
                 {CONFIG.SERVICE_NAME}
               </div>
             </div>
+          </header>
+          <main id="mainContent" role="main">
 
             <div className="page-section">
               <div className="grid-row">
@@ -359,9 +354,6 @@ class PrivacyNotice extends React.Component {
           <footer role="contentinfo">
             <div className="global-footer">
               <div className="global-footer__inner">
-                <a id="footerImgLink" href={CONFIG.NHSUK_ROOT_DOMAIN} className="global-footer__link">
-                  <img src={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/logotype-nhs-colour.png'} alt="NHS"/>
-                </a>
                 <div>
                   <h2 className="util-visuallyhidden">Terms and conditions</h2>
                   <ul className="link-list">

@@ -122,7 +122,7 @@ class ReviewYourChoice extends React.Component {
                 <div className="column--two-thirds">
                   <form id="reviewChoicesForm" onSubmit={this.handleConfirmationSubmit} action="" >
                     <h2 id="your-choice" className="h3">Your choice</h2>
-                    <p>Your confidential patient information <b>{this.state.sharingPreference}</b> be used | <a id="editChoicesLink" href={SET_YOUR_PREFERENCES_ENDPOINT} aria-label="Change preference">Change</a></p>
+                    <p>Your confidential patient information <b>{this.state.sharingPreference}</b> be used | <a id="editChoicesLink" href={SET_YOUR_PREFERENCES_ENDPOINT} aria-label="Change choice">Change</a></p>
                     <p>We will send confirmation of your choice to {this.state.contactValue}</p>
                     <input disabled={this.state.disabled} id="reviewChoicesSubmitButton" className="button" type="submit" role="button" value="Confirm"></input>
                   </form>

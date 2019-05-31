@@ -2,34 +2,36 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {VerificationForm} from './page/form.js';
-import {Content} from './page/content.js';
 import {FormContent} from './page/form-content.js';
 import {VerificationRadio} from './page/radio.js';
 
 import {SectionTwoThirds} from '../../../components/page-composition/section-two-thirds.js';
-import {PageStepper} from '../../../components/page-composition/page-stepper.js';
 import {ErrorBox} from '../../../components/page-composition/error-box.js';
 
 
 export const Page = (props) => {
 
   return <div id="holder">
-    <PageStepper
-      title="Verification option"
-      step="2">
+    <div className="page-section">
       <SectionTwoThirds>
         <div className="reading-width">
-          <Content
-            validForm={props.validForm}
-            disabled={props.disabled}/>
-
           <ErrorBox
-            title="Select a verification option to continue"
+            title="There is a problem"
             validForm={props.validForm}>
             <li className={props.validForm ? 'util-displaynone' : ''}>
-              <a id="radioOptionsLink" href="#verification-option">No verification option selected</a>
+              <a id="radioOptionsLink" href="#verification-option">Select where we should send your security code</a>
             </li>
           </ErrorBox>
+
+          <h1 className="h2">Get your security code</h1>
+
+          <p>
+            With the details you gave us we think we’ve found your contact details from your health records.
+            { !!props.email ^ !!props.sms
+              ? ` We could only find your ${props.email ? "email address" : "mobile number"}.`
+              : "" }
+          </p>
+          <p>We now need to send you a security code. After 30 minutes your security code will not work.</p>
 
           <VerificationForm
             handleSubmit={props.handleSubmit}
@@ -40,18 +42,20 @@ export const Page = (props) => {
               email={props.email}
               sms={props.sms}>
 
-              <VerificationRadio
-                email={props.email}
-                sms={props.sms}
-                verificationChoice={props.verificationChoice}
-                setVerificationChoice={props.setVerificationChoice}/>
+              {props.email && props.sms
+                ? <VerificationRadio
+                    email={props.email}
+                    sms={props.sms}
+                    verificationChoice={props.verificationChoice}
+                    setVerificationChoice={props.setVerificationChoice}/>
+                : null}
 
             </FormContent>
 
           </VerificationForm>
         </div>
       </SectionTwoThirds>
-    </PageStepper>
+    </div>
   </div>;
 };
 

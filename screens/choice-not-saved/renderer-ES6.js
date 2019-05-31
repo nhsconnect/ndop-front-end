@@ -38,6 +38,7 @@ function handle(event, context) {
           CommonUtils.RESPONSE_BODY_INTERNAL_SERVER_ERROR,
           CommonUtils.HTTP_RESPONSE_SERVER_ERROR,
           CommonUtils.CONTENT_TYPE_APPLICATION_JSON_HEADER));
+        return;
       }
       CONFIG = retrievedConfig;
       renderHtml(context);
@@ -81,7 +82,7 @@ class SetPreferenceError extends React.Component {
             `}} />
             <meta httpEquiv="refresh" content="0.0;url=/nojs/"/>
           </noscript>
-          <title>Unable to save your choice - {CONFIG.SERVICE_NAME}</title>
+          <title>Sorry, we could not save your choice - {CONFIG.SERVICE_NAME}</title>
 
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -95,11 +96,6 @@ class SetPreferenceError extends React.Component {
               <a id="skipToContentLink" href="#mainContent" className="skiplinks__link">Skip to main content</a>
             </div>
           </div>
-          <div className="banner beta">
-            <div className="page-section">
-              <span>BETA</span> This is a new service - your feedback will help this service.
-            </div>
-          </div>
           <header id="header" role="banner">
             <div className="global-header">
               <div className="global-header__inner">
@@ -108,30 +104,21 @@ class SetPreferenceError extends React.Component {
                 </a>
               </div>
             </div>
-          </header>
-          <main id="content" role="main">
             <div className="page-band">
               <div className="page-section">
                 {CONFIG.SERVICE_NAME}
               </div>
             </div>
+          </header>
+          <main id="content" role="main">
             <div className="page-section">
               <div className="reading-width">
                 <div className="grid-row">
                   <div className="column--two-thirds">
-                    <h1 className="h2">Unable to save your choice</h1>
-                    <p>
-                      Sorry, we were unable to save your choice.
-                    </p>
-                    <p>
-                      This was due to an error on our behalf. Your choice has not been updated.
-                    </p>
-                    <p>Please try again later.</p>
-                    <p>
-                      <a className="button" href={CONFIG.LANDING_PAGE_ENDPOINT}>Return to the start page</a>
-                    </p>
-                    <h2 className="h3">Other ways to manage your choice</h2>
-                    <p>You can also choose use the non-digital service instead. Please see <a href={CONFIG.OTHER_WAYS_TO_SET_YOUR_PREFERENCES_ENDPOINT}>other ways to manage your choice</a>.</p>
+                    <h1 className="h2">Sorry, we could not save your choice </h1>
+                    <p>Please try again later or contact us:</p>
+                    <p>Telephone: 0300 303 5678
+                      <br/>Monday to Friday, 9am to 5pm excluding bank holidays</p>
                   </div>
                 </div>
               </div>
@@ -140,9 +127,6 @@ class SetPreferenceError extends React.Component {
           <footer role="contentinfo">
             <div className="global-footer">
               <div className="global-footer__inner">
-                <a id="footerImgLink" href={CONFIG.NHSUK_ROOT_DOMAIN} className="global-footer__link">
-                  <img src={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/logotype-nhs-colour.png'} alt="NHS"/>
-                </a>
                 <div>
                   <h2 className="util-visuallyhidden">Terms and conditions</h2>
                   <ul className="link-list">

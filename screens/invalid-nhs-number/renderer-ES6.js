@@ -2,8 +2,8 @@ import * as CommonUtils from './lambda-common-utils-ES5.js';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
-var CONFIG = null;
 var LOGGER = null;
+var CONFIG = null;
 
 exports.renderer = function(event, context) {
   try {
@@ -52,8 +52,8 @@ function handle(event, context) {
 
 function renderHtml(context) {
   LOGGER.info('rendering_html | lambda_progress=in-progress');
-  var genericErrorComponent = getGenericErrorComponent();
-  var ComponentFactory = React.createFactory(genericErrorComponent);
+  var component = getInvalidNHSNumberComponent();
+  var ComponentFactory = React.createFactory(component);
   var html = CommonUtils.DOCTYPE_TAG + ReactDOMServer.renderToStaticMarkup(ComponentFactory());
   LOGGER.info('rendered_html | lambda_progress=in-progress');
   var response = CommonUtils.generateResponse(html, CommonUtils.HTTP_RESPONSE_OK, CommonUtils.CONTENT_TYPE_TEXT_HTML_HEADER);
@@ -61,11 +61,11 @@ function renderHtml(context) {
   context.succeed(response);
 }
 
-function getGenericErrorComponent() {
-  return GenericError;
+function getInvalidNHSNumberComponent() {
+  return InvalidNHSNumber;
 }
 
-class GenericError extends React.Component {
+class InvalidNHSNumber extends React.Component {
   render() {
     return (
       <html lang="en-GB">
@@ -81,7 +81,7 @@ class GenericError extends React.Component {
             `}} />
             <meta httpEquiv="refresh" content="0.0;url=/nojs/"/>
           </noscript>
-          <title>Sorry, there is a problem with this service - {CONFIG.SERVICE_NAME}</title>
+          <title>Sorry, your NHS number is not valid - {CONFIG.SERVICE_NAME}</title>
 
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -110,11 +110,15 @@ class GenericError extends React.Component {
             </div>
           </header>
           <main id="mainContent" role="main">
-            <div className="page-section" id="page-content">
-              <div className="grid-row">
-                <div className="column--two-thirds">
-                  <h1 className="h2">Sorry, there is a problem with this service</h1>
-                  <p>Please try again later.</p>
+            <div className="page-section">
+              <div className="reading-width">
+                <div className="grid-row">
+                  <div className="column--two-thirds">
+                    <h1 className="h2">Sorry, your NHS number is not valid</h1>
+                    <p>Contact us for help making your choice:</p>
+                    <p>Telephone: 0300 303 5678<br/>
+                      Monday to Friday, 9am to 5pm excluding bank holidays</p>
+                  </div>
                 </div>
               </div>
             </div>

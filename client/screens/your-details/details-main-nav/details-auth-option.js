@@ -75,24 +75,22 @@ class DetailsAuthOption extends React.Component {
     return (
       <Section>
         <div className='column--two-thirds'>
-          <ErrorBox title='To use this online service, resolve the following errors' validForm={this.state.validForm}>
+          <ErrorBox title='There is a problem' validForm={this.state.validForm}>
             <li id='auth-option-error-link' className={this.state.authChoice ? 'util-displaynone' : ''}>
-              <Link to='#radioFormLegend' id='authOptionErrorLink'>Select an option</Link>
+              <Link to='#radioFormLegend' id='authOptionErrorLink'>Select yes if you know your NHS number</Link>
             </li>
           </ErrorBox>
           <form onSubmit={this.handleSubmit}>
-            <fieldset id='auth-option' className='form-group form-row util-no-margin'>
-              <div className='reading-width'>
-                <legend id='radioFormLegend'>
-                  <h1 className='h2'>Do you know your NHS number?</h1>
-                </legend>
-                <div className='error error-message'>
-                  <p className='error-text error-label'>Indicate your choice to continue</p>
-                </div>
-                <span className='form-label__hint'>This is a 10 digit number, like 485 777 3456</span>
-                <span className='form-label__hint'>You can find this on any letter sent to you by the NHS, on a prescription or by logging in to a GP practice online service</span>
-              </div>
-              <div className='radio'>
+            <fieldset id='auth-option' className={'form-group form-row util-no-margin'+ (this.state.validForm ? '' : ' form-row-error-active has-error error-message-active')}>
+              <legend id='radioFormLegend'>
+                <h1 className='h2'>Do you know your NHS number?</h1>
+              </legend>
+              <span className='form-label__hint'>This is a 10 digit number, like 485 777 3456</span>
+              <span className='form-label__hint'>You can find this on any letter sent to you by the NHS, on a prescription or by logging in to a GP practice online service</span>
+              <div className='radio' className={this.state.validForm ? '' : 'error error-message error-message-active'}>
+                <p className={this.state.validForm ? 'util-displaynone' : 'error-text error-label'} id='auth-option-error'>
+                  Select yes if you know your NHS number
+                </p>
                 <RadioButton {...radioButtonSharedProps}
                   id='nhs-number-journey'
                   value={choices.nhsNumber}
@@ -130,7 +128,7 @@ class DetailsAuthOption extends React.Component {
             </div>
           </details>
           <p>
-            <a href="" onClick={this.goBack} id='detailsAuthOptionGoBackLink'>Go back</a>
+            <a href="" onClick={this.goBack} id='detailsAuthOptionGoBackLink'>Go back to the previous page</a>
           </p>
         </div>
       </Section>

@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {GENERIC_SYSTEM_ERROR_ENDPOINT, REQUEST_CODE_ENDPOINT,
-  CONTACT_DETAILS_NOT_RECOGNISED_ENDPOINT} from '../../common/endpoints.js';
-import {ERROR_TITLE, VERIFICATION_OPTION_TITLE} from '../../common/constants.js';
+import {GENERIC_SYSTEM_ERROR_ENDPOINT, REQUEST_CODE_ENDPOINT} from '../../common/endpoints.js';
+import {ERROR_TITLE, VERIFICATION_OPTION_TITLE, STATE_CACHE_KEY} from '../../common/constants.js';
 import {responseEndpoints} from './endpoint-mappings.js';
 import {post} from '../../services/fetch.js';
 import {handleSubmitResponse} from '../../common/handlers.js';
-import {STATE_CACHE_KEY} from "../../common/constants";
 import {Page} from './container/page.js';
 
 export class PageContainer extends React.Component {
@@ -29,8 +27,14 @@ export class PageContainer extends React.Component {
     sessionStorage.removeItem(STATE_CACHE_KEY);
   }
 
+  getChoice() {
+    return this.state.verificationChoice
+        || ((this.props.email && !this.props.sms) && "email")
+        || ((this.props.sms && !this.props.email) && "sms");
+  }
+
   validateForm() {
-    let hasChoice = this.state.verificationChoice ? true : false;
+    let hasChoice = !!this.getChoice();
     this.setState({
       validForm: hasChoice,
       disabled: false
@@ -46,14 +50,11 @@ export class PageContainer extends React.Component {
     event.preventDefault();
     if (!this.validateForm()) {
       return;
-    } if (this.state.verificationChoice == 'unrecognised'){
-      window.location.href = CONTACT_DETAILS_NOT_RECOGNISED_ENDPOINT;
-      return;
-    }
+    } 
 
     this.setState({ disabled: true });
 
-    let body = {otp_delivery_type: this.state.verificationChoice};
+    let body = {otp_delivery_type: this.getChoice()};
     post(REQUEST_CODE_ENDPOINT, body)
       .then((response) =>  {
         handleSubmitResponse(response, responseEndpoints);
@@ -64,7 +65,6 @@ export class PageContainer extends React.Component {
   }
 
   render() {
-
     return(
       <Page
         validForm={this.state.validForm}
@@ -73,7 +73,7 @@ export class PageContainer extends React.Component {
         email={this.props.email}
         sms={this.props.sms}
         verificationChoice={this.state.verificationChoice}
-        setVerificationChoice={(event) => {this.setState({verificationChoice: event.target.value});}}/>);
+        setVerificationChoice={(event) => this.setState({verificationChoice: event.target.value})}/>);
   }
 }
 

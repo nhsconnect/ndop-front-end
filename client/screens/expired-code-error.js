@@ -67,26 +67,15 @@ class ExpiredCodeError extends React.Component {
         <div className="reading-width">
           <div className="grid-row">
             <div className="column--two-thirds">
-              <h1 className="h2">Your code has expired</h1>
+              <h1 className="h2">Your security code has expired</h1>
+              <p>You'll need to get a new code to make your choice.</p>
               <p>
-                The code you have entered has now expired. For security reasons, your code will expire after 30 minutes.
+                <button id="resend-code" disabled={this.state.disabled} onClick={this.handleResendClick} className="button" type="submit" value="Confirm">Get a new code</button>
               </p>
-              <p>
-                You will need a new verification code.
-              </p>
-              <p>
-                <button id="resend-code" disabled={this.state.disabled} onClick={this.handleResendClick} className="button" type="submit" value="Confirm">Receive a new code</button>
-              </p>
-              <h2 className="h3">Other ways to manage your choice</h2>
-              <p>
-                If you are having difficulties verifying your code we may be able to guide you through the service, or manage your choice on your behalf.
-              </p>
-              <p>
-                Call: 0300 303 5678
-              </p>
-              <p>
-                Open: 9am to 5pm Monday to Friday (excluding bank holidays).
-              </p>
+              <h2 className="h3">Other ways to make your choice</h2>
+              <p>You can <a
+                href="https://www.nhs.uk/your-nhs-data-matters/manage-your-choice/other-ways-to-manage-your-choice/">make
+                your choice by phone or by filling out a paper form.</a></p>
             </div>
           </div>
         </div>

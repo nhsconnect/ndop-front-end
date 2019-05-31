@@ -16,7 +16,9 @@ class DetailsNHSNumber extends React.Component {
     this.state = {
       disabled: false,
       validForm: true,
-      nhsNumber: props.nhsNumber || ''
+      nhsNumber: props.nhsNumber || '',
+      nhsNumberErrorMessage: '',
+      nhsNumberErrorMessageDetailed: '',
     };
 
     this.validateForm = this.validateForm.bind(this);
@@ -36,7 +38,30 @@ class DetailsNHSNumber extends React.Component {
     return valid;
   }
 
+  isLikeNationalInsuranceNumber(){
+    let value = this.state.nhsNumber.replace(/\s/g, '');
+    return (/^\D{2}\d{6}\D$/.test(value))
+  }
+
   validateForm(){
+
+    if(!this.state.nhsNumber){
+      this.setState({nhsNumberErrorMessage: 'Enter your NHS number', nhsNumberErrorMessageDetailed: 'Enter your NHS number' });
+    }
+    else if(this.isLikeNationalInsuranceNumber()){
+      this.setState({nhsNumberErrorMessage: "We think you've entered a National Insurance number. You need to enter your NHS number", nhsNumberErrorMessageDetailed: "We think you've entered a National Insurance number. You need to enter your NHS number" });
+    }
+    else if(isNaN(this.state.nhsNumber.replace(/\s/g, ''))){
+      this.setState({nhsNumberErrorMessage: 'Your NHS number should not contain letters', nhsNumberErrorMessageDetailed: 'Your NHS number should not contain letters' });
+    }
+    else if(this.state.nhsNumber.replace(/\s/g, '').toString().length > 10){
+      this.setState({nhsNumberErrorMessage: 'Your NHS number is too long', nhsNumberErrorMessageDetailed: 'Your NHS number is too long' });
+    }
+    else if(this.state.nhsNumber.replace(/\s/g, '').toString().length < 10){
+      this.setState({nhsNumberErrorMessage: 'Your NHS number is too short', nhsNumberErrorMessageDetailed: 'Your NHS number is too short' });
+    }
+
+
     let validForm = (!!this.state.nhsNumber) && this.checkLength();
     this.setState({validForm: validForm});
 
@@ -85,9 +110,9 @@ class DetailsNHSNumber extends React.Component {
     return (
       <Section>
         <div className='column--two-thirds'>
-          <ErrorBox title='To use this online service, resolve the following errors' validForm={this.state.validForm}>
+          <ErrorBox title='There is a problem' validForm={this.state.validForm}>
             <li id='nhs-number-error-link' className={this.state.validForm ? 'util-displaynone' : '' }>
-              <Link to='#nhsNumberContainer' id='nhsNumberInputLink' name='nhsNumberContainer' onClick={inputFocus}>NHS number is missing or invalid</Link>
+              <Link to='#nhsNumberContainer' id='nhsNumberInputLink' name='nhsNumberContainer' onClick={inputFocus}>{this.state.nhsNumberErrorMessage}</Link>
             </li>
           </ErrorBox>
           <form onSubmit={this.handleSubmit}>
@@ -99,7 +124,7 @@ class DetailsNHSNumber extends React.Component {
                 <div id='nhsNumberContainer' className='column--three-quarters field-container' tabIndex='-1'>
                   <span className='form-label__hint'>This is a 10 digit number, like 485 777 3456</span>
                   <p className={this.state.validForm ? 'util-displaynone' : 'error error-message error-label error-text error-message-active'} id='nhs-number-error'>
-                    Please enter your NHS Number
+                    {this.state.nhsNumberErrorMessageDetailed}
                   </p>
                   <input className='-small form-control' name='nhsNumber' type='text' id='nhs-number-input'  value={this.state.nhsNumber} onChange={this.handleInput}/>
                 </div>
@@ -108,7 +133,7 @@ class DetailsNHSNumber extends React.Component {
             <input type='submit' className='button' id='detailsNHSNumberContinueButton' disabled={this.state.disabled} value='Continue'/>
           </form>
           <p>
-            <a href="" onClick={this.goBack} id='detailsNHSNumberGoBackLink'>Go back</a>
+            <a href="" onClick={this.goBack} id='detailsNHSNumberGoBackLink'>Go back to the previous page</a>
           </p>
         </div>
       </Section>

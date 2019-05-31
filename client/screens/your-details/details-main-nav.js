@@ -21,7 +21,8 @@ class DetailsMainNav extends React.Component {
       },
       disabled: false,
       fromReviewPage: false,
-      flowUsed: null
+      flowUsed: null,
+      nhsNumberFailed: false
     };
 
     const cachedState = sessionStorage.getItem(STATE_CACHE_KEY);
@@ -42,7 +43,7 @@ class DetailsMainNav extends React.Component {
     this.warnBeforeNavigatingAway = this.warnBeforeNavigatingAway.bind(this);
   }
 
-  updateState(fields, form = {}){
+  updateState(fields, form = {}, callback = null){
     const validForms = {
       ...this.state.validForms,
       ...form
@@ -57,6 +58,7 @@ class DetailsMainNav extends React.Component {
         version: STATE_CACHE_VERSION,
         ...this.state
       }));
+      callback && callback();
     });
   }
 
@@ -77,6 +79,10 @@ class DetailsMainNav extends React.Component {
 
   onSubmit() {
     window.removeEventListener('beforeunload', this.warnBeforeNavigatingAway);
+  }
+
+  onNHSNumberInvalid(callback) {
+    this.updateState({nhsNumberFailed: true}, {}, callback)
   }
 
   componentDidMount() {
@@ -135,6 +141,8 @@ class DetailsMainNav extends React.Component {
               render={() => (<DetailsYourReview
                 {...sharedProps}
                 onSubmit={this.onSubmit}
+                onNHSNumberInvalid={this.onNHSNumberInvalid}
+                nhsNumberFailed={this.state.nhsNumberFailed}
                 postcode={this.state.flowUsed === 'postcode' ? this.state.postcode : null}
                 nhsNumber={this.state.flowUsed === 'nhsNumber' ? this.state.nhsNumber : null}
                 firstName={this.state.firstName}

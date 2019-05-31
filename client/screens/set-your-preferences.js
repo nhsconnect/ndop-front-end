@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {GENERIC_SYSTEM_ERROR_ENDPOINT, SERVICE_UNAVAIABLE_ENDPOINT, SESSION_EXPIRED_ENDPOINT,
+import {SET_PREFERENCE_ERROR_ENDPOINT, SERVICE_UNAVAIABLE_ENDPOINT, SESSION_EXPIRED_ENDPOINT,
   SET_PREFERENCES_ENDPOINT, REVIEW_YOUR_CHOICE_ENDPOINT, GET_PREFERENCE_RESULT_ENDPOINT} from '../common/endpoints.js';
 import {fadeIn, getCacheBustingUniqueSeed} from '../common/utils.js';
 import {get, post} from '../services/fetch.js';
@@ -15,8 +15,8 @@ const responseEndpoints = {
   403: SESSION_EXPIRED_ENDPOINT,
   503: SERVICE_UNAVAIABLE_ENDPOINT,
   429: SERVICE_UNAVAIABLE_ENDPOINT,
-  401: GENERIC_SYSTEM_ERROR_ENDPOINT,
-  500: GENERIC_SYSTEM_ERROR_ENDPOINT
+  401: SET_PREFERENCE_ERROR_ENDPOINT,
+  500: SET_PREFERENCE_ERROR_ENDPOINT
 };
 
 class SetPreferences extends React.Component {
@@ -75,7 +75,7 @@ class SetPreferences extends React.Component {
           }, () => {setTimeout(this.poll, POLL_DELAY_MILLIS);});
         }
         else{
-          window.location.href = GENERIC_SYSTEM_ERROR_ENDPOINT;
+          window.location.href = SET_PREFERENCE_ERROR_ENDPOINT;
         }
       });
   }
@@ -101,18 +101,18 @@ class SetPreferences extends React.Component {
       return;
     }
 
-    window.location.href = GENERIC_SYSTEM_ERROR_ENDPOINT;
+    window.location.href = SET_PREFERENCE_ERROR_ENDPOINT;
   }
 
   updateStateOnSuccess(data) {
     let elementId = '#existing-preference';
-    if (data.hasOwnProperty('opted_out') && data.opted_out=='active'){
+    if (data.hasOwnProperty('opted_out') && data.opted_out === 'active'){
       this.setState({
         preference: 'no',
         current_pref_text: 'do not allow'
       }, () => {fadeIn(elementId);});
     }
-    else if (data.hasOwnProperty('opted_out') && data.opted_out=='inactive'){
+    else if (data.hasOwnProperty('opted_out') && data.opted_out === 'inactive'){
       this.setState({
         preference: 'yes',
         current_pref_text: 'allow'
@@ -125,7 +125,7 @@ class SetPreferences extends React.Component {
       var page = responseEndpoints[status];
       window.location.href = page;
     } else {
-      window.location.href = GENERIC_SYSTEM_ERROR_ENDPOINT;
+      window.location.href = SET_PREFERENCE_ERROR_ENDPOINT;
     }
   }
 
@@ -143,7 +143,7 @@ class SetPreferences extends React.Component {
         this.handleSubmitResponse(response);
       })
       .catch((_error) => {
-        window.location.href = GENERIC_SYSTEM_ERROR_ENDPOINT;
+        window.location.href = SET_PREFERENCE_ERROR_ENDPOINT;
       });
   }
 
@@ -152,7 +152,7 @@ class SetPreferences extends React.Component {
       this.getPreferenceResult();
       return;
     }
-    window.location.href = GENERIC_SYSTEM_ERROR_ENDPOINT;
+    window.location.href = SET_PREFERENCE_ERROR_ENDPOINT;
   }
 
   startPolling() {
@@ -177,27 +177,26 @@ class SetPreferences extends React.Component {
       return (
         <div>
           <div className="page-section">
-            <h1 className="h2">Make your choice</h1>
-          </div>
-          <div className="page-section">
             <div className="reading-width">
               <div className="grid-row">
                 <div className="column--two-thirds">
                   <div className="reading-width">
+                    <div id="errorBox" className={'error error-summary callout callout--error error-message ' + (this.state.validForm ? '' : 'error-message-active')} role="alert" tabIndex="-1">
+                      <h2 className="h3" id="error-summary">There is a problem</h2>
+                      <ul className="link-list" id="link-to-errors">
+                        <li id="" className={this.state.validForm ? 'util-displaynone' : ''}>
+                          <a id="setPreferencesInputLink" href="#preference">Select your choice</a>
+                        </li>
+                      </ul>
+                    </div>
                     { (this.state.current_pref_text) ?
                       (
                         <div className="alert alert-info" role="alert" id="existing-preference"><p>Your current choice: you <b>{this.state.current_pref_text}</b> the use of your confidential patient information.</p></div>
                       )
                       : ''
                     }
-                    <div id="errorBox" className={'error error-summary callout callout--error error-message ' + (this.state.validForm ? '' : 'error-message-active')} role="alert" tabIndex="-1">
-                      <h2 className="h3" id="error-summary">Indicate your choice to continue</h2>
-                      <ul className="link-list" id="link-to-errors">
-                        <li id="" className={this.state.validForm ? 'util-displaynone' : ''}>
-                          <a id="setPreferencesInputLink" href="#preference">No choice selected</a>
-                        </li>
-                      </ul>
-                    </div>
+
+                    <h1 className="h2">Make your choice</h1>
 
                     <p>Your confidential patient information can be used for improving health, care and services, including:</p>
                     <ul>
@@ -208,9 +207,9 @@ class SetPreferences extends React.Component {
 
                     <form className="form" id="setPreferencesForm" onSubmit={this.handleSubmit} action="" >
                       <fieldset id="preference" className={'form-group form-row util-no-margin ' + (this.state.validForm ? '' : 'form-row-error-active has-error')} >
-                        <legend className={'h3 ' + (this.state.validForm ? '' : 'error-label')}>I allow my confidential patient information to be used for research and planning:</legend>
+                        <legend className='h3'>I allow my confidential patient information to be used for research and planning:</legend>
                         <div id="single-question-input-error" className={'error error-message ' + (this.state.validForm ? '' : 'error-message-active')}>
-                          <p className="error-text">Indicate your choice to continue</p>
+                          <p className={"error-text"  + (this.state.validForm ? '' : ' error-label')}>Select your choice</p>
                         </div>
                         <RadioButton {...radioButtonSharedProps} id="single-opted-in" value="yes" checked={this.state.preference === 'yes'} labelText="Yes" labelId="label-for-single-opted-in"/>
                         <RadioButton {...radioButtonSharedProps} id="single-opted-out" value="no" checked={this.state.preference === 'no'} labelText="No" labelId="label-for-single-opted-out"/>

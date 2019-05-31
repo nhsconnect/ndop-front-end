@@ -76,28 +76,32 @@ function respond(context, sessionId) {
   var sessionValidationData = {
     'lambdaClient': LAMBDA_CLIENT,
     'sessionId': sessionId,
-    'checkStateModel': CONFIG.CHECK_STATE_MODEL_FUNCTION_NAME
+    'getLambdaName': CONFIG.GET_STATE_MODEL_FUNCTION_NAME
   };
 
-  CommonUtils.validSessionState(sessionValidationData, (valid) => {
-    if (valid !== true) {
+  CommonUtils.getStateModel(sessionValidationData, (data) => {
+    if (!data) {
       context.succeed(CommonUtils.generateUnauthorizedResponse(CONFIG));
       return;
     }
 
-
-    var html = renderHtml();
+    var html = renderHtml(
+        data['communication_type'] === 'email' ? 'email' : 'sms',
+        data['communication_type'] === 'email'
+            ? obfuscateEmail(data['email_address'])
+            : obfuscatePhoneNumber(data['mobile_number'])
+    );
     var response = CommonUtils.generateResponse(html, CommonUtils.HTTP_RESPONSE_OK, CommonUtils.CONTENT_TYPE_TEXT_HTML_HEADER);
     LOGGER.info('finished_lambda | lambda_progress=finished');
     context.succeed(response);
   });
 }
 
-function renderHtml() {
+function renderHtml(otpMethod, otpContact) {
   LOGGER.info('rendering_html | lambda_progress=in-progress');
   var enterOtpComponent = getEnterOtpComponent();
   var ComponentFactory = React.createFactory(enterOtpComponent);
-  var html = ReactDOMServer.renderToStaticMarkup(ComponentFactory());
+  var html = ReactDOMServer.renderToStaticMarkup(ComponentFactory({otpMethod, otpContact}));
   LOGGER.info('rendered_html | lambda_progress=in-progress');
   return CommonUtils.DOCTYPE_TAG + html;
 
@@ -106,6 +110,49 @@ function renderHtml() {
 function getEnterOtpComponent() {
   return EnterOtp;
 }
+
+/**
+ * Censor the email address of the patient before it is returned to the client. The first
+ * two characters of the part before the @ are always left in plain text, and a maximum of 8
+ * subsequent characters starred out. If the part before the @ is under 5 characters in length,
+ * the second level domain will also be starred out.
+ *
+ * @see Reference python implementation at api/common/utils.py:obfuscate_email
+ */
+function obfuscateEmail(emailAddress) {
+  const [localPart, ...domainParts] = emailAddress.split('@');
+  const domain = domainParts.join("@");
+  const [localPrefix, localSuffix] = [localPart.slice(0, 2), localPart.slice(10)];
+  const localStars = "*".repeat(Math.max(Math.min(8, localPart.length - 2), 0));
+
+  /*
+  If an insufficient number of characters from the local part would be censored, attempt
+  a best effort complete censorship of the second level domain, leaving the top level
+  domain in-tact. This will sometimes only censor the subdomain rather than the whole
+  SLD, but a more full-on solution is needed to do it correctly.
+  See https://github.com/john-kurkowski/tldextract
+   */
+  let [sld, ...tldParts] = domain.split('.');
+  const tld = tldParts.join(".");
+  if (localPart.length < 5) {
+    sld = "*".repeat(sld.length);
+  }
+
+  return `${localPrefix}${localStars}${localSuffix}@${sld}.${tld}`;
+}
+
+/**
+ * Censor the email address of the patient before it is returned to the client.
+ *
+ * @see Reference python implementation at
+ * api/confirmation_delivery_method/confirmation_delivery_method.py:obfuscate_sms
+ */
+function obfuscatePhoneNumber(number) {
+    const numberSuffix = number.slice(-3);
+    const obfuscatedDigits = '*'.repeat(Math.max(0, number.length - 3));
+    return `${obfuscatedDigits}${numberSuffix}`;
+}
+
 
 class EnterOtp extends React.Component {
   render() {
@@ -123,7 +170,7 @@ class EnterOtp extends React.Component {
             `}} />
             <meta httpEquiv="refresh" content="0.0;url=/nojs/"/>
           </noscript>
-          <title>Enter your code - {CONFIG.SERVICE_NAME}</title>
+          <title>Enter your security code - {CONFIG.SERVICE_NAME}</title>
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
           <link rel="icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.png'}/>
@@ -138,11 +185,6 @@ class EnterOtp extends React.Component {
               <a id="skipToContentLink" href="#mainContent" className="skiplinks__link">Skip to main content</a>
             </div>
           </div>
-          <div className="banner beta">
-            <div className="page-section">
-              <span>BETA</span> This is a new service - your feedback will help this service.
-            </div>
-          </div>
           <header id="header" role="banner">
             <div className="global-header">
               <div className="global-header__inner">
@@ -151,20 +193,17 @@ class EnterOtp extends React.Component {
                 </a>
               </div>
             </div>
-          </header>
-          <div className="page-band">
-            <div className="page-section">
-              {CONFIG.SERVICE_NAME}
+            <div className="page-band">
+              <div className="page-section">
+                {CONFIG.SERVICE_NAME}
+              </div>
             </div>
-          </div>
-          <main id="mainContent" role="main" data-otp-length={OTP_LENGTH}>
+          </header>
+          <main id="mainContent" role="main" data-otp-length={OTP_LENGTH} data-otp-method={this.props.otpMethod} data-otp-contact={this.props.otpContact}>
           </main>
           <footer role="contentinfo">
             <div className="global-footer">
               <div className="global-footer__inner">
-                <a id="footerImgLink" href={CONFIG.NHSUK_ROOT_DOMAIN} className="global-footer__link">
-                  <img src={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/logotype-nhs-colour.png'} alt="NHS"/>
-                </a>
                 <div>
                   <h2 className="util-visuallyhidden">Terms and conditions</h2>
                   <ul className="link-list">

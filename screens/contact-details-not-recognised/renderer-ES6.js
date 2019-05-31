@@ -133,7 +133,7 @@ class ContactDetailsNotRecognised extends React.Component {
             `}} />
             <meta httpEquiv="refresh" content="0.0;url=/nojs/"/>
           </noscript>
-          <title>Contact us - {CONFIG.SERVICE_NAME}</title>
+          <title>Sorry, we have the wrong contact details for you - {CONFIG.SERVICE_NAME}</title>
 
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -147,11 +147,6 @@ class ContactDetailsNotRecognised extends React.Component {
               <a id="skipToContentLink" href="#mainContent" className="skiplinks__link">Skip to main content</a>
             </div>
           </div>
-          <div className="banner beta">
-            <div className="page-section">
-              <span>BETA</span> This is a new service - your feedback will help this service.
-            </div>
-          </div>
           <header id="header" role="banner">
             <div className="global-header">
               <div className="global-header__inner">
@@ -160,22 +155,22 @@ class ContactDetailsNotRecognised extends React.Component {
                 </a>
               </div>
             </div>
-          </header>
-          <div className="page-band">
-            <div className="page-section">
-              {CONFIG.SERVICE_NAME}
+            <div className="page-band">
+              <div className="page-section">
+                {CONFIG.SERVICE_NAME}
+              </div>
             </div>
-          </div>
+          </header>
           <main id="mainContent" role="main">
             <div className="page-section" id="page-content">
               <div className="reading-width">
                 <div className="grid-row">
                   <div className="column--two-thirds">
-                    <h1 className="h2">Contact us</h1>
-                    <p>Sorry, we seem to have the wrong contact details for you.</p>
-                    <p>This may be because you have not registered these details with your GP Practice, or your GP Practice has not yet shared them with us.</p>
-                    <p> You can try again when your information is updated, or you can choose to use the non-digital service instead.</p>
-                    <p>Please see <a id="goToOtherWaysToSetYourPreferencesId" href={CONFIG.OTHER_WAYS_TO_SET_YOUR_PREFERENCES_ENDPOINT}>other ways to manage your choice</a>.</p>
+                    <h1 className="h2">Sorry, we have the wrong contact details for you</h1>
+                    <p>You'll need to update your details at your GP practice. Once your details are updated, you'll be able to make your choice online.</p>
+                    <h2 className="h3">Other ways to make your choice</h2>
+                    <p>You can <a id="goToOtherWaysToSetYourPreferencesId" href={CONFIG.OTHER_WAYS_TO_SET_YOUR_PREFERENCES_ENDPOINT}>
+                      make your choice by phone or by filling out a paper form.</a></p>
                   </div>
                 </div>
               </div>
@@ -184,9 +179,6 @@ class ContactDetailsNotRecognised extends React.Component {
           <footer role="contentinfo">
             <div className="global-footer">
               <div className="global-footer__inner">
-                <a id="footerImgLink" href={CONFIG.NHSUK_ROOT_DOMAIN} className="global-footer__link">
-                  <img src={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/logotype-nhs-colour.png'} alt="NHS"/>
-                </a>
                 <div>
                   <h2 className="util-visuallyhidden">Terms and conditions</h2>
                   <ul className="link-list">

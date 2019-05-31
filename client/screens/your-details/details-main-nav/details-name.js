@@ -24,6 +24,10 @@ class DetailsName extends React.Component {
       },
       firstName: props.firstName || '',
       lastName: props.lastName || '',
+      firstNameErrorMessage: '',
+      firstNameErrorMessageDetailed: '',
+      lastNameErrorMessage: '',
+      lastNameErrorMessageDetailed: '',
     };
 
     this.validateForm = this.validateForm.bind(this);
@@ -41,6 +45,21 @@ class DetailsName extends React.Component {
       'firstName': this.state.firstName,
       'lastName': this.state.lastName
     };
+
+    if(!this.state.firstName){
+      this.setState({firstNameErrorMessage: 'Enter your first name', firstNameErrorMessageDetailed: 'Enter your first name' });
+    }
+    else if(!nameRegex.test(this.state.firstName)){
+      this.setState({firstNameErrorMessage: 'Check your first name', firstNameErrorMessageDetailed: "Check that you've entered your first name correctly" });
+    }
+
+    if(!this.state.lastName){
+      this.setState({lastNameErrorMessage: 'Enter your last name', lastNameErrorMessageDetailed: 'Enter your last name' });
+    }
+    else if(!nameRegex.test(this.state.lastName)){
+      this.setState({lastNameErrorMessage: 'Check your last name', lastNameErrorMessageDetailed: "Check that you've entered your last name correctly" });
+    }
+
     let validFields = {
       'firstName': !!this.state.firstName && nameRegex.test(this.state.firstName),
       'lastName': !!this.state.lastName && nameRegex.test(this.state.lastName),
@@ -91,12 +110,12 @@ class DetailsName extends React.Component {
     return (
       <Section>
         <div className='column--two-thirds'>
-          <ErrorBox title='To use this online service, resolve the following errors' validForm={this.state.validForm}>
+          <ErrorBox title='There is a problem' validForm={this.state.validForm}>
             <li id='first-name-error-link' className={this.state.validFields.firstName ? 'util-displaynone' : ''}>
-              <Link to='#firstNameContainer' id='firstNameInputLink' name='firstNameContainer' onClick={inputFocus}>First name is missing</Link>
+              <Link to='#firstNameContainer' id='firstNameInputLink' name='firstNameContainer' onClick={inputFocus}>{this.state.firstNameErrorMessage}</Link>
             </li>
             <li id='last-name-error-link' className={this.state.validFields.lastName ? 'util-displaynone' : ''}>
-              <Link to='#lastNameContainer' id='lastNameInputLink' name='lastNameContainer' onClick={inputFocus}>Last name is missing</Link>
+              <Link to='#lastNameContainer' id='lastNameInputLink' name='lastNameContainer' onClick={inputFocus}>{this.state.lastNameErrorMessage}</Link>
             </li>
           </ErrorBox>
           <form id='yourDetailsNameForm' onSubmit={this.handleSubmit} action='' >
@@ -109,14 +128,14 @@ class DetailsName extends React.Component {
                 <div className='column--two-thirds'>
                   <div id='firstNameContainer' tabIndex='-1' className={'field-container ' + (this.state.validFields.firstName ? '' : 'form-row-error-active has-error')}>
                     <p className={this.state.validFields.firstName ? 'util-displaynone' : 'error error-message error-text error-label error-message-active'} id='first-name-error'>
-                      Enter your first name
+                      {this.state.firstNameErrorMessageDetailed}
                     </p>
                     <label id='firstNameLabel' className='form-label' htmlFor='firstName'>First name</label>
                     <input className='form-control' name='firstName' type='text' id='firstName' value={this.state.firstName} onChange={this.handleInput} autoComplete='given-name'/>
                   </div>
                   <div id='lastNameContainer' tabIndex='-1' className={this.state.validFields.lastName ? 'field-container' : 'field-container form-row-error-active has-error'}>
                     <p className={this.state.validFields.lastName ? 'util-displaynone' : 'error error-message error-text error-label error-message-active'} id='last-name-error'>
-                      Enter your last name
+                      {this.state.lastNameErrorMessageDetailed}
                     </p>
                     <label id='lastNameLabel' className='form-label' htmlFor='lastName'>Last name</label>
                     <input className='form-control' name='lastName' type='text' id='lastName' value={this.state.lastName} onChange={this.handleInput}  autoComplete='family-name'/>
@@ -127,7 +146,7 @@ class DetailsName extends React.Component {
             <input type='submit' className='button' id='detailsNameContinueButton' value='Continue'/>
           </form>
           <p>
-            <a href={this.props.fromReviewPage ? '' : LANDING_PAGE_ENDPOINT} onClick={this.props.fromReviewPage ? this.goBack: undefined} id='detailsNameGoBackLink'>Go back</a>
+            <a href={this.props.fromReviewPage ? '' : LANDING_PAGE_ENDPOINT} onClick={this.props.fromReviewPage ? this.goBack: undefined} id='detailsNameGoBackLink'>Go back to the previous page</a>
           </p>
         </div>
       </Section>

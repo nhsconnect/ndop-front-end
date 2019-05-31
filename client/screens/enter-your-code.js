@@ -32,8 +32,7 @@ class VerifyOtp extends React.Component {
       maxOtpResendCountReached: false,
       incorrectCodeEntered: false,
       disabled: false,
-      resendClickable: true,
-      displayFlash: true
+      resendClickable: true
     };
 
     this.handleCodeSubmit = this.handleCodeSubmit.bind(this);
@@ -48,8 +47,7 @@ class VerifyOtp extends React.Component {
     var valid = this.state.enterOtpInput != null && this.state.enterOtpInput && ('' + this.state.enterOtpInput).length == OTP_LENGTH;
     this.setState({
       validForm: valid,
-      disabled: false,
-      displayFlash: false
+      disabled: false
     }, valid ? null : () => {
       window.location = '#mainContent';
       document.getElementById('errorBox').focus();
@@ -70,12 +68,11 @@ class VerifyOtp extends React.Component {
 
     if (responseEndpoints.hasOwnProperty(status)) {
       var page = responseEndpoints[status];
-      if (page == RETRY_OTP_ENTRY) {
+      if (page === RETRY_OTP_ENTRY) {
         this.setState({
           'incorrectCodeEntered': true,
           'validForm': false,
-          'disabled': false,
-          'displayFlash': false
+          'disabled': false
         }, () => {
           window.location = '#mainContent';
           document.getElementById('errorBox').focus();
@@ -133,13 +130,9 @@ class VerifyOtp extends React.Component {
   handleResendClickResponse({data, status}){
     this.setState({
       resendOtpAttempted: true,
-      resendClickable: true,
-      displayFlash: true
+      resendClickable: true
     }, () => {
       if (status === 200) {
-        let flashElement = document.getElementById('flash-message');
-        flashElement.focus();
-        fadeIn('#flash-message');
         fadeIn('#resend-notice');
         if (data.resend_count === RESEND_COUNT_REACHED) {
           this.setState({ maxOtpResendCountReached: true });
@@ -158,12 +151,6 @@ class VerifyOtp extends React.Component {
     });
   }
 
-  componentDidMount() {
-    requestAnimationFrame(() => {
-      fadeIn('#flash-message');
-    });
-  }
-
   render() {
     var errorBoxSummary = ENTER_YOUR_CODE;
     var errorBoxMessage = NO_CODE_PROVIDED;
@@ -176,19 +163,20 @@ class VerifyOtp extends React.Component {
     return (
       <div id="outer-holder">
         <div className="page-section">
-          <h1 className="h2">Enter your code </h1>
-        </div>
-        <div className="page-section">
           <div className="reading-width">
             <div className="grid-row">
               <div className="column--two-thirds">
-
-                <div className={'alert alert-success ' + (this.state.displayFlash ? '' : 'util-displaynone')} id="flash-message" role="alert" tabIndex="-1">
-                  <p>Your code has been successfully sent!</p>
-                </div>
-                <div className={this.state.resendOtpAttempted ? '' : 'util-displaynone'} id="resend-notice">
-                  <p>We’ve resent your code to your chosen option. The code will expire in 30 minutes. Do not close this browser window or your code will also expire.</p>
-                </div>
+                <p className={"alert alert-success" + (this.state.resendOtpAttempted ? '' : ' util-displaynone')}  id="flash-message" role="alert" tabIndex="-1" id="resend-notice">
+                    We've resent your security code.
+                </p>
+                <h1 className="h2">
+                    <label id="enterOtpLabel" htmlFor="enterOtpInput">Enter your security code</label>
+                </h1>
+                <span className="form-label__hint">We sent your security code by&nbsp;
+                  <span id="2fa-method">
+                    {this.props.otpMethod === "email" ? "email" : "text"} to {this.props.otpContact}
+                  </span>
+                </span>
                 <div id="errorBox" className={'error error-summary callout callout--error error-message ' + (this.state.validForm ? '' : 'error-message-active')} role="alert" tabIndex="-1">
                   <h2 id="error-summary" className="h3">{errorBoxSummary}</h2>
                   <ul className="link-list">
@@ -199,15 +187,14 @@ class VerifyOtp extends React.Component {
                 </div>
 
                 <form className="form" id="enterOtpForm" onSubmit={this.handleCodeSubmit} action="" >
-                  <div id="code-input" className={'form-group form-row ' + (this.state.validForm ? '' : 'form-row-error-active')}>
-                    <label id="enterOtpLabel" className="form-label" htmlFor="enterOtpInput">Enter the code received on your mobile or email</label>
+                  <div id="code-input" className={'form-group form-row ' + (this.state.validForm ? '' : 'form-row-error-active has-error')}>
                     <div className={'error error-message ' + (this.state.validForm ? '' : 'error-message-active')}>
                       <p className="error-text error-label">{inputBoxErrorMessage}</p>
                     </div>
 
-                    <input className="-small" id="enterOtpInput" name="enterOtpInput" type="number" value={this.state.enterOtpInput} onChange={this.handleInputChange}></input>
-                    <p>Didn&apos;t receive your code? <a href="#" id="resend-code" onClick={this.state.resendClickable ? this.handleResendClick : e => e.preventDefault()}>{this.state.maxOtpResendCountReached ? 'Contact us': 'Resend code'}</a></p>
-                    <input disabled={this.state.disabled} id="enterOtpSubmitButton" className="button" type="submit" role="button" value="Submit"></input>
+                    <input className="-small form-control" id="enterOtpInput" name="enterOtpInput" type="number" value={this.state.enterOtpInput} onChange={this.handleInputChange}/>
+                    <input disabled={this.state.disabled} id="enterOtpSubmitButton" className="button" type="submit" role="button" value="Submit"/>
+                    <p>Didn&apos;t get your security code? <a href="#" id="resend-code" onClick={this.state.resendClickable ? this.handleResendClick : e => e.preventDefault()}>{this.state.maxOtpResendCountReached ? 'Contact us': 'Resend code'}</a></p>
                   </div>
                 </form>
               </div>
@@ -219,4 +206,8 @@ class VerifyOtp extends React.Component {
   }
 }
 
-ReactDOM.render(<VerifyOtp/>, document.getElementById('mainContent'));
+const element = document.getElementById('mainContent');
+ReactDOM.render(<VerifyOtp
+    otpMethod={element.dataset.otpMethod}
+    otpContact={element.dataset.otpContact}
+  />, element);
