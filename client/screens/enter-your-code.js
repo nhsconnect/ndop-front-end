@@ -194,7 +194,7 @@ class VerifyOtp extends React.Component {
 
                     <input className="-small form-control" id="enterOtpInput" name="enterOtpInput" type="number" value={this.state.enterOtpInput} onChange={this.handleInputChange}/>
                     <input disabled={this.state.disabled} id="enterOtpSubmitButton" className="button" type="submit" role="button" value="Submit"/>
-                    <p>Didn&apos;t get your security code? <a href="#" id="resend-code" onClick={this.state.resendClickable ? this.handleResendClick : e => e.preventDefault()}>{this.state.maxOtpResendCountReached ? 'Contact us': 'Resend code'}</a></p>
+                    <p>Didn&apos;t get your security code? <a href="#" id="resend-code" onClick={this.state.resendClickable ? this.handleResendClick : e => e.preventDefault()}>Resend code</a></p>
                   </div>
                 </form>
               </div>

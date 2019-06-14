@@ -167,7 +167,7 @@ class ContactDetailsNotRecognised extends React.Component {
                 <div className="grid-row">
                   <div className="column--two-thirds">
                     <h1 className="h2">Sorry, we have the wrong contact details for you</h1>
-                    <p>You'll need to update your details at your GP practice. Once your details are updated, you'll be able to make your choice online.</p>
+                    <p>You&apos;ll need to update your details at your GP practice. Once your details are updated, you&apos;ll be able to make your choice online.</p>
                     <h2 className="h3">Other ways to make your choice</h2>
                     <p>You can <a id="goToOtherWaysToSetYourPreferencesId" href={CONFIG.OTHER_WAYS_TO_SET_YOUR_PREFERENCES_ENDPOINT}>
                       make your choice by phone or by filling out a paper form.</a></p>
@@ -180,6 +180,10 @@ class ContactDetailsNotRecognised extends React.Component {
             <div className="global-footer">
               <div className="global-footer__inner">
                 <div>
+                  <h2 className="util-visuallyhidden">Getting help using the website</h2>
+                  <p>
+                    <a id="accessibilityStatementFooterLink" target="_blank" rel="noopener noreferrer" href={CONFIG.ACCESSIBILITY_STATEMENT_ENDPOINT}>Accessibility <span className="util-visuallyhidden"> - Page opens in new window</span></a>
+                  </p>
                   <h2 className="util-visuallyhidden">Terms and conditions</h2>
                   <ul className="link-list">
                     <li><a id="privacyNoticeFooterLink" target="_blank" rel="noopener noreferrer" href={CONFIG.PRIVACY_NOTICE_ENDPOINT}>Privacy notice <span className="util-visuallyhidden"> - Page opens in new window</span></a></li>
@@ -190,7 +194,6 @@ class ContactDetailsNotRecognised extends React.Component {
               </div>
             </div>
           </footer>
-          <script type='text/javascript' src={CONFIG.STATIC_RESOURCES_CDN_URL + '/js/lib/hotjar.js'}></script>
         </body>
       </html>
     );

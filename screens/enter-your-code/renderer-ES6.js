@@ -86,10 +86,10 @@ function respond(context, sessionId) {
     }
 
     var html = renderHtml(
-        data['communication_type'] === 'email' ? 'email' : 'sms',
-        data['communication_type'] === 'email'
-            ? obfuscateEmail(data['email_address'])
-            : obfuscatePhoneNumber(data['mobile_number'])
+      data['communication_type'] === 'email' ? 'email' : 'sms',
+      data['communication_type'] === 'email'
+        ? obfuscateEmail(data['email_address'])
+        : obfuscatePhoneNumber(data['mobile_number'])
     );
     var response = CommonUtils.generateResponse(html, CommonUtils.HTTP_RESPONSE_OK, CommonUtils.CONTENT_TYPE_TEXT_HTML_HEADER);
     LOGGER.info('finished_lambda | lambda_progress=finished');
@@ -121,9 +121,9 @@ function getEnterOtpComponent() {
  */
 function obfuscateEmail(emailAddress) {
   const [localPart, ...domainParts] = emailAddress.split('@');
-  const domain = domainParts.join("@");
+  const domain = domainParts.join('@');
   const [localPrefix, localSuffix] = [localPart.slice(0, 2), localPart.slice(10)];
-  const localStars = "*".repeat(Math.max(Math.min(8, localPart.length - 2), 0));
+  const localStars = '*'.repeat(Math.max(Math.min(8, localPart.length - 2), 0));
 
   /*
   If an insufficient number of characters from the local part would be censored, attempt
@@ -133,9 +133,9 @@ function obfuscateEmail(emailAddress) {
   See https://github.com/john-kurkowski/tldextract
    */
   let [sld, ...tldParts] = domain.split('.');
-  const tld = tldParts.join(".");
+  const tld = tldParts.join('.');
   if (localPart.length < 5) {
-    sld = "*".repeat(sld.length);
+    sld = '*'.repeat(sld.length);
   }
 
   return `${localPrefix}${localStars}${localSuffix}@${sld}.${tld}`;
@@ -148,9 +148,9 @@ function obfuscateEmail(emailAddress) {
  * api/confirmation_delivery_method/confirmation_delivery_method.py:obfuscate_sms
  */
 function obfuscatePhoneNumber(number) {
-    const numberSuffix = number.slice(-3);
-    const obfuscatedDigits = '*'.repeat(Math.max(0, number.length - 3));
-    return `${obfuscatedDigits}${numberSuffix}`;
+  const numberSuffix = number.slice(-3);
+  const obfuscatedDigits = '*'.repeat(Math.max(0, number.length - 3));
+  return `${obfuscatedDigits}${numberSuffix}`;
 }
 
 
@@ -205,6 +205,10 @@ class EnterOtp extends React.Component {
             <div className="global-footer">
               <div className="global-footer__inner">
                 <div>
+                  <h2 className="util-visuallyhidden">Getting help using the website</h2>
+                  <p>
+                    <a id="accessibilityStatementFooterLink" target="_blank" rel="noopener noreferrer" href={CONFIG.ACCESSIBILITY_STATEMENT_ENDPOINT}>Accessibility <span className="util-visuallyhidden"> - Page opens in new window</span></a>
+                  </p>
                   <h2 className="util-visuallyhidden">Terms and conditions</h2>
                   <ul className="link-list">
                     <li><a id="privacyNoticeFooterLink" target="_blank" rel="noopener noreferrer" href={CONFIG.PRIVACY_NOTICE_ENDPOINT}>Privacy notice <span className="util-visuallyhidden"> - Page opens in new window</span></a></li>
@@ -217,7 +221,6 @@ class EnterOtp extends React.Component {
           </footer>
           <script type='text/javascript' src={CONFIG.STATIC_RESOURCES_CDN_URL + '/js/app/vendor.bundle.js'}></script>
           <script type='text/javascript' src={CONFIG.STATIC_RESOURCES_CDN_URL + '/js/app/enteryourcode.bundle.js'}></script>
-          <script type='text/javascript' src={CONFIG.STATIC_RESOURCES_CDN_URL + '/js/lib/hotjar.js'}></script>
         </body>
       </html>
     );

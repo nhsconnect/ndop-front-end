@@ -128,6 +128,10 @@ class SetPreferenceError extends React.Component {
             <div className="global-footer">
               <div className="global-footer__inner">
                 <div>
+                  <h2 className="util-visuallyhidden">Getting help using the website</h2>
+                  <p>
+                    <a id="accessibilityStatementFooterLink" target="_blank" rel="noopener noreferrer" href={CONFIG.ACCESSIBILITY_STATEMENT_ENDPOINT}>Accessibility <span className="util-visuallyhidden"> - Page opens in new window</span></a>
+                  </p>
                   <h2 className="util-visuallyhidden">Terms and conditions</h2>
                   <ul className="link-list">
                     <li><a href={CONFIG.PRIVACY_NOTICE_ENDPOINT} target="_blank" rel="noopener noreferrer">Privacy notice<span className="util-visuallyhidden"> - Page opens in new window</span></a></li>
@@ -140,7 +144,6 @@ class SetPreferenceError extends React.Component {
           </footer>
           <script type='text/javascript' src={CONFIG.STATIC_RESOURCES_CDN_URL + '/js/app/vendor.bundle.js'}></script>
           <script type='text/javascript' src={CONFIG.STATIC_RESOURCES_CDN_URL + '/js/app/setpreferenceerror.bundle.js'}></script>
-          <script type='text/javascript' src={CONFIG.STATIC_RESOURCES_CDN_URL + '/js/lib/hotjar.js'}></script>
         </body>
       </html>
     );

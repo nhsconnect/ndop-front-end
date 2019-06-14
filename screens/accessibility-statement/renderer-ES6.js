@@ -1,8 +1,10 @@
 import * as CommonUtils from './lambda-common-utils-ES5.js';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import * as AWS from 'aws-sdk';
 
 var CONFIG = null;
+var LAMBDA_CLIENT = null;
 var LOGGER = null;
 
 exports.renderer = function(event, context) {
@@ -18,7 +20,7 @@ exports.renderer = function(event, context) {
 function handle(event, context) {
 
   var metaData = CommonUtils.getMetaData(event, context);
-  LOGGER = CommonUtils.configureLogger(metaData);
+  setupLambda(metaData);
 
   if (CommonUtils.maintenanceModeActive()) {
     LOGGER.info('maintenance_mode_active | lambda_progress=aborting');
@@ -50,6 +52,15 @@ function handle(event, context) {
   }
 }
 
+function setupLambda(metaData) {
+
+  LOGGER = CommonUtils.configureLogger(metaData);
+
+  if (LAMBDA_CLIENT == null) {
+    LAMBDA_CLIENT = new AWS.Lambda();
+  }
+}
+
 function respond(context) {
   var html = renderHtml();
   var response = CommonUtils.generateResponse(html, CommonUtils.HTTP_RESPONSE_OK, CommonUtils.CONTENT_TYPE_TEXT_HTML_HEADER);
@@ -59,18 +70,18 @@ function respond(context) {
 
 function renderHtml() {
   LOGGER.info('rendering_html | lambda_progress=in-progress');
-  var cookiesPolicyComponent = getCookiesPolicyComponent();
-  var ComponentFactory = React.createFactory(cookiesPolicyComponent);
+  var accessibilityStatementComponent = getAccessibilityStatementComponent();
+  var ComponentFactory = React.createFactory(accessibilityStatementComponent);
   var html = ReactDOMServer.renderToStaticMarkup(ComponentFactory());
   LOGGER.info('rendered_html | lambda_progress=in-progress');
   return CommonUtils.DOCTYPE_TAG + html;
 }
 
-function getCookiesPolicyComponent() {
-  return CookiesPolicy;
+function getAccessibilityStatementComponent() {
+  return AccessibilityStatement;
 }
 
-class CookiesPolicy extends React.Component {
+class AccessibilityStatement extends React.Component {
   render() {
     return (
       <html lang="en-GB">
@@ -80,7 +91,7 @@ class CookiesPolicy extends React.Component {
           <meta name="viewport" content="width=device-width, initial-scale=1"/>
           <meta httpEquiv="x-ua-compatible" content="ie=edge"/>
           <meta httpEquiv="X-Frame-Options" content="deny"/>
-          <title>Cookies Policy - {CONFIG.SERVICE_NAME}</title>
+          <title>Accessibility statement - {CONFIG.SERVICE_NAME}</title>
           <link rel="stylesheet" type="text/css" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/css/nhsuk.css'} media="screen"/>
           <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
           <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -107,64 +118,72 @@ class CookiesPolicy extends React.Component {
               </div>
             </div>
           </header>
-          <main className="" id="content" role="main">
+          <main id="mainContent" role="main">
             <div className="page-section">
               <div className="grid-row">
                 <div className="column--two-thirds">
                   <div className="reading-width">
-                    <h1 className="h2">Cookie policy</h1>
-                    <p>This website puts small files called cookies onto the device you&apos;re using the website on (for example your phone).</p>
-                    <p>We use cookies to:</p>
+                    <h1 className="h2">Accessibility statement</h1>
+                    <p>The Choose if data from your health records is shared for research and planning website is run by NHS Digital.</p>
+                    <p>We want everyone to be able to use this website.</p>
+                    <h2 className="h3">How accessible this website is</h2>
+                    <p>We’re committed to making this website accessible, in accordance with the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.</p>
+                    <p>This website is fully compliant with the <a href="https://www.w3.org/TR/WCAG21/">Web Content Accessibility Guidelines version 2.1</a> AA standard.</p>
+                    <p>You should be able to:</p>
                     <ul>
-                      <li>keep your visit secure</li>
-                      <li>check you&apos;ve seen our cookie banner</li>
+                      <li>change colours, contrast levels and fonts</li>
+                      <li>zoom in up to 300% without the text spilling off the screen</li>
+                      <li>navigate most of the website using just a keyboard</li>
+                      <li>navigate most of the website using speech recognition software</li>
+                      <li>listen to most of the website using a screen reader (including the most recent versions of JAWS, NVDA and VoiceOver)</li>
                     </ul>
-                    <p>You&apos;ll see a message on the site before we store a cookie on your computer.</p>
-                    <p>Find out more about <a target="_blank" rel="noopener noreferrer" href="https://ico.org.uk/your-data-matters/online/cookies/">how to manage cookies<span className="util-visuallyhidden"> - Page opens in new window</span></a> <span aria-hidden="true"> (opens in new window)</span>.</p>
-                    <h2 id="how-cookies-are-used">How we use cookies</h2>
-                    <h3>To keep your visit secure</h3>
-                    <p>We store a temporary cookie on your device to keep your visit secure when you use our website.</p>
-                    <div className="table--responsive">
-                      <table>
-                        <thead>
-                          <tr><th>Name</th><th>Purpose</th><th>Expires</th></tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>session_id</td>
-                            <td>We use this cookie to make sure it’s you that’s using the website so we can keep your visit secure</td>
-                            <td>When you leave the website</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-
-                    <h3>To check you&apos;ve seen our cookie banner</h3>
-
-                    <p>You will see a pop up banner when you first visit the website telling you that we use cookies.</p>
-
-                    <p>We store a cookie so that your device knows you&apos;ve seen the banner and knows not to show it again.</p>
-
-                    <div className="table--responsive">
-                      <table>
-                        <thead>
-                          <tr><th>Name</th><th>Purpose</th><th>Expires</th></tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>ndop_seen_cookie_message</td>
-                            <td>We use this cookie to check if you&apos;ve seen our cookie message</td>
-                            <td>After 1 month</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    <h3 className="h4">Issue with Dragon NaturallySpeaking removing content from edit boxes</h3>
+                    <p>For some Dragon NaturallySpeaking users the tool may delete or remove the content you’ve dictated from input fields after you click continue. If this happens use keyboard commands to continue.</p>
+                    <h3 className="h4">Issue with the page refreshing if you disable JavaScript</h3>
+                    <p>If you disable JavaScript the page will keep refreshing while we load or save your data:</p>
+                    <ul>
+                      <li>when you submit your details</li>
+                      <li>when we show you your current choice</li>
+                      <li>when we save your choice</li>
+                    </ul>
+                    <p>This issue does not happen if you enable JavaScript.</p>
+                    <h2 className="h3">What to do if you can’t access parts of this website</h2>
+                    <p>We have <a href="https://www.nhs.uk/your-nhs-data-matters/manage-your-choice/different-languages-and-formats/">information about your choice in other languages and formats</a>.</p>
+                    <p>You can <a href="https://www.nhs.uk/your-nhs-data-matters/manage-your-choice/other-ways-to-manage-your-choice/">make your choice by phone or by post</a>.</p>
+                    <h2 className="h3">Reporting accessibility problems with this website</h2>
+                    <p>Contact us to tell us about any accessibility problems or to give us feedback.</p>
+                    <p>
+                      <strong>By email</strong>
+                      <br/><a href="mailto:enquiries@nhsdigital.nhs.uk">enquiries@nhsdigital.nhs.uk</a>
+                    </p>
+                    <p>
+                      <strong>By phone</strong>
+                      <br/>0300 303 5678
+                      <br/>Monday to Friday, 9am to 5pm excluding bank holidays
+                    </p>
+                    <h2 className="h3">By using the Next Generation Text service</h2>
+                    <p>If you are Deaf, have hearing loss or have difficulty speaking you can contact us using the Next Generation Text (NGT) service.</p>
+                    <p>To call us using the Next Generation Text service, dial 18001 followed by 0300 303 5678.</p>
+                    <h2 className="h3">Enforcement procedure</h2>
+                    <p>The Equality and Human Rights Commission (EHRC) is responsible for enforcing the accessibility regulations.</p>
+                    <p>If you’re not happy with how we respond to your complaint, <a href="https://www.equalityadvisoryservice.com/app/ask">contact the Equality Advisory and Support Service (EASS)</a>.</p>
+                    <h2 className="h3">How we tested this website</h2>
+                    <p>This website was last tested on 15 May 2019.</p>
+                    <p>The test was carried out by the Digital Accessibility Centre (DAC).</p>
+                    <p>We tested:</p>
+                    <ul>
+                      <li><a href="https://www.nhs.uk/your-nhs-data-matters/">our main website</a></li>
+                      <li><a href="https://your-data-matters.service.nhs.uk/">our online service</a></li>
+                    </ul>
+                    <h2 className="h3">Last updated</h2>
+                    <p>This accessibility statement was prepared on 20 June 2019.</p>
+                    <p>This accessibility statement was last updated on 20 June 2019.</p>
                   </div>
                 </div>
               </div>
-
             </div>
           </main>
+
           <footer role="contentinfo">
             <div className="global-footer">
               <div className="global-footer__inner">

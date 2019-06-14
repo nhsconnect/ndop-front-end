@@ -345,7 +345,7 @@ const Unauthorized = ({ CONFIG }) => (
       <meta httpEquiv="x-ua-compatible" content="ie=edge"/>
       <meta httpEquiv="X-Frame-Options" content="deny"/>
 
-      <title>Sorry, you'll need to start again - {CONFIG.SERVICE_NAME}</title>
+      <title>Sorry, you&apos;ll need to start again - {CONFIG.SERVICE_NAME}</title>
 
       <link rel="shortcut icon" type="image/x-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/favicon.ico'}/>
       <link rel="apple-touch-icon" href={CONFIG.STATIC_RESOURCES_CDN_URL + '/images/apple-touch-icon.png'}/>
@@ -380,7 +380,7 @@ const Unauthorized = ({ CONFIG }) => (
             <div className="grid-row">
               <div className="column--two-thirds">
                 <h1 className="h2">Sorry, you’ll need to start again</h1>
-                <p>You'll need to start again because you’ve not used this service for a while.</p>
+                <p>You&apos;ll need to start again because you’ve not used this service for a while.</p>
                 <p>We do this for your security.</p>
                 <a id="returnButton" className="button" href="/landingpage">
                   Start again
@@ -394,6 +394,10 @@ const Unauthorized = ({ CONFIG }) => (
         <div className="global-footer">
           <div className="global-footer__inner">
             <div>
+              <h2 className="util-visuallyhidden">Getting help using the website</h2>
+              <p>
+                <a id="accessibilityStatementFooterLink" target="_blank" rel="noopener noreferrer" href={CONFIG.ACCESSIBILITY_STATEMENT_ENDPOINT}>Accessibility <span className="util-visuallyhidden"> - Page opens in new window</span></a>
+              </p>
               <h2 className="util-visuallyhidden">Terms and conditions</h2>
               <ul className="link-list">
                 <li><a id="privacyNoticeFooterLink" target="_blank" rel="noopener noreferrer" href={CONFIG.PRIVACY_NOTICE_ENDPOINT}>Privacy notice <span className="util-visuallyhidden"> - Page opens in new window</span></a></li>
@@ -404,7 +408,6 @@ const Unauthorized = ({ CONFIG }) => (
           </div>
         </div>
       </footer>
-      <script type='text/javascript' src={CONFIG.STATIC_RESOURCES_CDN_URL + '/js/lib/hotjar.js'}></script>
     </body>
   </html>
 );

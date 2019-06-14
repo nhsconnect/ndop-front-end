@@ -184,7 +184,7 @@ class LookupFailure extends React.Component {
                     </div>
                     : <div className="column--two-thirds">
                       <h1 className="h2">Sorry, your details do not match what we have in our records</h1>
-                      <p>If the details you gave are correct you'll need to update your details at your GP practice
+                      <p>If the details you gave are correct you&apos;ll need to update your details at your GP practice
                         before you can make your choice online.</p>
                       <p>If you think you made a mistake entering your details you can try again.</p>
                       <a className="button" href="/yourdetails">
@@ -207,6 +207,10 @@ class LookupFailure extends React.Component {
             <div className="global-footer">
               <div className="global-footer__inner">
                 <div>
+                  <h2 className="util-visuallyhidden">Getting help using the website</h2>
+                  <p>
+                    <a id="accessibilityStatementFooterLink" target="_blank" rel="noopener noreferrer" href={CONFIG.ACCESSIBILITY_STATEMENT_ENDPOINT}>Accessibility <span className="util-visuallyhidden"> - Page opens in new window</span></a>
+                  </p>
                   <h2 className="util-visuallyhidden">Terms and conditions</h2>
                   <ul className="link-list">
                     <li><a id="privacyNoticeFooterLink" target="_blank" rel="noopener noreferrer" href={CONFIG.PRIVACY_NOTICE_ENDPOINT}>Privacy notice <span className="util-visuallyhidden"> - Page opens in new window</span></a></li>
@@ -217,7 +221,6 @@ class LookupFailure extends React.Component {
               </div>
             </div>
           </footer>
-          <script type='text/javascript' src={CONFIG.STATIC_RESOURCES_CDN_URL + '/js/lib/hotjar.js'}></script>
         </body>
       </html>
     );
